@@ -4,7 +4,6 @@
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/xuwentao/.oh-my-zsh"
 export GOPATH="/Users/xuwentao/Code/go"
-export PATH=$PATH:/Users/xuwentao/Library/Python/2.7/bin
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOPATH:$GOBIN
 export PATH="/usr/local/sbin:$PATH"
@@ -19,7 +18,7 @@ export GOPRIVATE=*.xiaomi.com
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-#ZSH_THEME="robbyrussell"
+# ZSH_THEME="powerlevel9k/powerlevel9k"
 ZSH_THEME="ys"
 
 # Set list of themes to pick from when loading at random
@@ -98,7 +97,7 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
-source ~/.bash_profile
+# source ~/.bash_profile
 
 # User configuration
 
@@ -136,7 +135,9 @@ alias o="open"
 alias mish="ssh xuwentao@relay.xiaomi.com"
 alias gs="git status"
 alias tree="tree -L 1"
-alias python="/usr/local/bin/python3"
+alias pip="pip3"
+alias python="python3"
+alias ll="ls -al"
 
 function hwcheck() {curl hwcheck.sys.srv/$1}
 
