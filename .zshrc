@@ -3,16 +3,16 @@
 
 # Path to your oh-my-zsh installation.
 export ZSH="/Users/xuwentao/.oh-my-zsh"
-export GOPATH="/Users/xuwentao/Code/go"
+export GOPATH="/Users/xuwentao/go"
+export GO111MODULE="on"
 export GOBIN=$GOPATH/bin
 export PATH=$PATH:$GOPATH:$GOBIN
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/user/local/Cellar:$PATH"
+export PATH="/usr/local/go:$PATH"
 export HOMEBREW_NO_AUTO_UPDATE=true
-export GOPATH=$GOPATH:"/Users/xuwentao/Projects/xiaomi"
-export GOPROXY=https://goproxy.cn
+export GOPROXY="https://goproxy.cn,https://pkgs.d.xiaomi.net/artifactory/go-remote,direct"
 export GOPRIVATE=*.xiaomi.com
-
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -135,9 +135,12 @@ alias o="open"
 alias mish="ssh xuwentao@relay.xiaomi.com"
 alias gs="git status"
 alias tree="tree -L 1"
-alias pip="pip3"
-alias python="python3"
+alias python="/usr/local/bin/python3"
+alias pip="/usr/local/bin/pip3"
 alias ll="ls -al"
+alias 翻译='fy'
+alias kubectl='minikube kubectl --'
+alias ..='cd ..'
 
 function hwcheck() {curl hwcheck.sys.srv/$1}
 
@@ -163,6 +166,7 @@ function cd() {
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
 
-  # Set Spaceship ZSH as a prompt
-  autoload -U promptinit; promptinit
-  prompt pure
+
+# Set Spaceship ZSH as a prompt
+autoload -U promptinit; promptinit
+prompt pure
