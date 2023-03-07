@@ -12,7 +12,6 @@ export PATH="/user/local/Cellar:$PATH"
 export PATH="/usr/local/go:$PATH"
 export HOMEBREW_NO_AUTO_UPDATE=true
 export GOPROXY="https://goproxy.cn,https://pkgs.d.xiaomi.net/artifactory/go-remote,direct"
-export GOPRIVATE=*.xiaomi.com
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -139,8 +138,8 @@ alias python="/usr/local/bin/python3"
 alias pip="/usr/local/bin/pip3"
 alias ll="ls -al"
 alias 翻译='fy'
-alias kubectl='minikube kubectl --'
 alias ..='cd ..'
+alias k='kubectl'
 
 function hwcheck() {curl hwcheck.sys.srv/$1}
 
@@ -166,7 +165,3 @@ function cd() {
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
 
-
-# Set Spaceship ZSH as a prompt
-autoload -U promptinit; promptinit
-prompt pure
