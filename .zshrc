@@ -17,8 +17,8 @@ export PATH=$PATH:$GOPATH:$GOBIN
 export PATH="/usr/local/sbin:$PATH"
 export PATH="/user/local/Cellar:$PATH"
 export PATH="/usr/local/go:$PATH"
+export GOPROXY="https://goproxy.cn,direct"
 export HOMEBREW_NO_AUTO_UPDATE=true
-export GOPROXY="https://goproxy.cn,https://pkgs.d.xiaomi.net/artifactory/go-remote,direct"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # Set name of the theme to load --- if set to "random", it will
@@ -149,27 +149,26 @@ alias ..='cd ..'
 alias k='kubectl'
 alias cat='bat -p'
 
-function hwcheck() {curl hwcheck.sys.srv/$1}
-
 function cd() {
-  if [[ -d ./venv ]] ; then
-    deactivate
-  fi
-
-  if [[ -d ./.venv ]] ; then
+  if [[ -d ./venv ]] || [[ -d ./.env ]] || [[ -d ./.venv ]] ; then
     deactivate
   fi
 
   builtin cd $1
 
-  if [[ -d ./venv ]] ; then
+  if [[ -d ./venv ]]; then
     . ./venv/bin/activate
   fi
 
-  if [[ -d ./.venv ]] ; then
-   . ./.venv/bin/activate
+  if [[ -d ./.env ]]; then
+    . ./.env/bin/activate
+  fi
+
+  if [[ -d ./.venv ]]; then
+    . ./.venv/bin/activate
   fi
 }
+
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
 
