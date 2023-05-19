@@ -20,6 +20,7 @@ export PATH="/usr/local/go:$PATH"
 export GOPROXY="https://goproxy.cn,direct"
 export HOMEBREW_NO_AUTO_UPDATE=true
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+export GPG_TTY=$TTY
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
@@ -148,6 +149,8 @@ alias 翻译='fy'
 alias ..='cd ..'
 alias k='kubectl'
 alias cat='bat -p'
+alias start-docker='open -a Docker'
+alias stop-docker="pkill -SIGHUP -f /Applications/Docker.app 'docker serve'"
 
 function cd() {
   if [[ -d ./venv ]] || [[ -d ./.env ]] || [[ -d ./.venv ]] ; then
