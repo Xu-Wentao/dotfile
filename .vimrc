@@ -12,6 +12,7 @@ set tabstop=4		" 设置Tab长度为4个空格
 set shiftwidth=4	" 设置自动缩进长度为4个空格
 set incsearch		" 实时搜索
 set ignorecase		" 搜索不敏感大小写
+set paste
 syntax on 			" 开启语法高亮
 syntax enable
 filetype plugin indent on
@@ -100,6 +101,9 @@ Plug 'jistr/vim-nerdtree-tabs'
 
 " 可以在导航目录中看到 git 版本信息
 Plug 'Xuyuanp/nerdtree-git-plugin'
+
+" icon 配置
+Plug 'nvim-tree/nvim-web-devicons'
 
 " 查看当前代码文件中的变量和函数列表的插件，
 " 可以切换和跳转到代码中对应的变量和函数的位置
