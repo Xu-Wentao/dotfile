@@ -24,6 +24,9 @@ export PATH="$(brew --prefix coreutils)/libexec/gnubin:/usr/local/bin:$PATH"
 
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
 export PATH="/usr/local/opt/ncurses/bin:$PATH"
+export PATH="/opt/homebrew/bin/:$PATH"
+
+export HOMEBREW_PREFIX="/opt/homebrew"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
@@ -56,6 +59,8 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 # source ~/.bash_profile
+source $HOMEBREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+source $HOMEBREW_PREFIX/share/powerlevel10k/powerlevel10k.zsh-theme
 
 alias rm="trash"
 alias cc="gcc-10"
