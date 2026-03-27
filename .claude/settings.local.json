@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C ~/Projects/github/dotfile remote -v)",
+      "Bash(git -C ~/Projects/github/dotfile status)",
+      "Bash(git -C ~/Projects/github/dotfile log --oneline -3)",
+      "Bash(chmod:*)",
+      "Bash(crontab:*)"
+    ]
+  }
+}

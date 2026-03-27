@@ -1,0 +1,22 @@
+#!/bin/bash
+# Auto sync dotfile repo to GitHub
+set -euo pipefail
+
+DOTFILE_DIR="$HOME/Projects/dotfile"
+LOG_FILE="$DOTFILE_DIR/.sync.log"
+
+log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$LOG_FILE"; }
+
+cd "$DOTFILE_DIR"
+
+# Check if there are changes
+if git diff --quiet && git diff --cached --quiet && [ -z "$(git ls-files --others --exclude-standard)" ]; then
+    log "No changes, skipping."
+    exit 0
+fi
+
+git add -A
+git commit -m "auto: sync dotfiles $(date '+%Y-%m-%d %H:%M')"
+git push origin master
+
+log "Sync completed."
