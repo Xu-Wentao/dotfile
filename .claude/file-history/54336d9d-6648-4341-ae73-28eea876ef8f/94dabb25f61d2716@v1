@@ -19,14 +19,14 @@ if [ $PULL_STATUS -ne 0 ]; then
     exit 1
 fi
 
-# Stage all changes (including untracked files)
-git add .
-git diff --cached --quiet
+# Stage all changes (tracked files only, no untracked)
+git diff --quiet && git diff --cached --quiet
 if [ $? -eq 0 ]; then
-    log "No changes to commit."
+    log "No tracked changes to commit."
 else
+    git add -u
     git commit -m "auto sync: $(date '+%Y-%m-%d %H:%M:%S')" >> "$LOG_FILE" 2>&1
-    log "Committed all changes."
+    log "Committed tracked changes."
 fi
 
 # Push

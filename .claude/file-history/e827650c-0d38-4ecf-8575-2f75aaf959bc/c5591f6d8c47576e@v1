@@ -1,0 +1,122 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Patent Platform — a B2B SaaS system for managing patent/trademark quotations, vendor costs, and pricing configuration. Built with FastAPI (Python) backend and React (TypeScript) frontend.
+
+## Common Commands
+
+### Backend (run from `/backend/`)
+
+```bash
+make install          # Install Python dependencies
+make run              # Start dev server (http://localhost:8000, hot reload)
+make init-db          # Initialize DB + seed data (admin/admin123)
+make reset-db         # Full DB reset (destructive)
+make migrate          # Apply pending Alembic migrations
+make make-migration msg="description"  # Create new migration
+make downgrade        # Rollback last migration
+make test             # Run pytest
+make test-cov         # Run pytest with HTML + terminal coverage report
+```
+
+### Frontend (run from `/frontend/`)
+
+```bash
+npm install           # Install dependencies
+npm run dev           # Start dev server (http://localhost:5173)
+npm run build         # TypeScript check + production build
+npm run lint          # ESLint check
+```
+
+### Docker (from project root)
+
+```bash
+make docker-up        # Full stack (PostgreSQL + backend)
+make db-up            # Database only
+```
+
+## Architecture
+
+### Stack
+
+- **Backend**: FastAPI + SQLAlchemy 2.0 + Alembic + PostgreSQL (SQLite for dev) + PyJWT
+- **Frontend**: React 19 + TypeScript + Vite + Tailwind CSS + shadcn/ui + Arco Design
+- **State**: Zustand (client state) + TanStack Query (server state)
+- **Forms**: React Hook Form + Zod validation
+- **HTTP**: Axios
+
+### Frontend API Mock Layer
+
+The frontend has a toggleable mock/real API system via `VITE_USE_MOCK=true|false` in `.env.development`. This allows independent frontend development without the backend running. The `src/api/` directory provides a unified interface that routes to either mock handlers (MSW) or real axios calls.
+
+### Backend Structure
+
+```
+backend/
+  app/
+    api/v1/         # Route handlers (auth, users, countries, vendors, quotations, etc.)
+    models/         # SQLAlchemy ORM models
+    schemas/        # Pydantic request/response schemas
+    services/       # Business logic layer
+    core/           # Config, security, database session
+    migrations/     # Alembic migration files
+```
+
+### Frontend Structure
+
+```
+frontend/src/
+  api/              # API client (mock + real implementations)
+  components/       # Shared UI components
+  pages/            # Route-level page components
+  stores/           # Zustand state stores
+  hooks/            # Custom React hooks
+  types/            # TypeScript type definitions
+  lib/              # Utilities
+```
+
+### Key Domain Models
+
+- **Country / ExchangeRate** — Geographic and currency configuration
+- **Vendor** — External patent/trademark agents
+- **PatentVendorCost / TrademarkVendorCost** — What vendors charge (cost side)
+- **PatentStandardPrice / TrademarkStandardPrice** — Platform pricing (price side); supports price books: `standard`, `vip`, `channel`, `channel_vip`
+- **Quotation → QuotationProduct → QuotationProductStage → QuotationProductStageMiscFee** — Quote document hierarchy
+- **MiscFee** — Add-on services attached to quotation stages
+
+Patent phases: `filing`, `examination`, `grant`, `annuity`, `invalidation`, `restoration`
+Trademark phases: `filing`, `registration`, `renewal`, `opposition`, `invalidation`
+Entity types: `large`, `small`, `micro`, `unified`
+
+## Environment Configuration
+
+**Backend** — copy `.env.example` to `.env`:
+- `DB_TYPE=sqlite` (dev) or `postgresql` (prod)
+- `SECRET_KEY` — JWT signing key
+- `CORS_ORIGINS` — allowed origins
+
+**Frontend** — `.env.development` already exists:
+- `VITE_USE_MOCK=true` — toggles mock API
+- `VITE_API_BASE_URL` — backend URL when mock is off
+
+## Database Migrations
+
+Always create a migration after model changes:
+```bash
+make make-migration msg="describe the change"
+make migrate
+```
+
+Migrations live in `backend/app/migrations/versions/`. The migration chain must remain unbroken — do not edit existing migration files.
+
+## Frontend Code Conventions
+
+- Prefer `unknown` with type narrowing over `any`
+- Use Zustand for client/UI state; React Query for server data
+- No derived state in `useEffect` — compute it during render
+- Only pure component exports in `.tsx` files
+- Tailwind CSS for all styling; use `cn()` (clsx + tailwind-merge) for conditional classes
+- Add shadcn components via `npx shadcn@latest add <component>`

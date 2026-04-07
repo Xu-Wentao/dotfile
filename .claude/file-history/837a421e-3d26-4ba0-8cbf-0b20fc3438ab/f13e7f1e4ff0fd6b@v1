@@ -1,0 +1,58 @@
+.PHONY: install run test docker-up docker-down db-up db-down migrate make-migration init-db reset-db clean test-cov
+
+install:
+	pip install -r requirements.txt
+
+run:
+	source .venv/bin/activate && uvicorn app.main:app --reload
+
+test:
+	source .venv/bin/activate && pytest -v
+
+docker-up:
+	docker-compose up -d
+
+docker-down:
+	docker-compose down
+
+db-up:
+	docker-compose up -d db
+
+db-down:
+	docker-compose stop db
+
+# 初始化数据库(创建表 + 种子数据)
+init-db:
+	source .venv/bin/activate && python -m app.init_db --init
+
+# 重置数据库(删除所有数据并重新初始化)
+reset-db:
+	source .venv/bin/activate && CONFIRM_RESET=yes python -m app.init_db --reset
+
+# 执行数据库迁移
+migrate:
+	source .venv/bin/activate && alembic upgrade head
+
+# 生成新的迁移文件
+make-migration:
+	source .venv/bin/activate && alembic revision --autogenerate -m "$(msg)"
+
+# 回滚迁移
+downgrade:
+	source .venv/bin/activate && alembic downgrade -1
+
+# 查看迁移历史
+history:
+	source .venv/bin/activate && alembic history
+
+# 运行测试并显示覆盖率
+test-cov:
+	source .venv/bin/activate && pytest --cov=app --cov-report=html --cov-report=term -v
+
+# 清理临时文件
+clean:
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	find . -type f -name "test_*.db" -delete 2>/dev/null || true
+	rm -rf .pytest_cache htmlcov .coverage
+
