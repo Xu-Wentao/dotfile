@@ -1,5 +1,5 @@
 {
-  "numStartups": 1023,
+  "numStartups": 1026,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -11,23 +11,23 @@
   },
   "tipsHistory": {
     "new-user-warmup": 9,
-    "plan-mode-for-complex-tasks": 491,
-    "terminal-setup": 977,
+    "plan-mode-for-complex-tasks": 1023,
+    "terminal-setup": 1024,
     "memory-command": 1011,
-    "theme-command": 977,
+    "theme-command": 1024,
     "status-line": 977,
     "stickers-command": 24,
     "prompt-queue": 16,
-    "enter-to-steer-in-relatime": 977,
-    "todo-list": 997,
+    "enter-to-steer-in-relatime": 1025,
+    "todo-list": 1025,
     "ide-upsell-external-terminal": 1011,
-    "install-github-app": 997,
-    "install-slack-app": 997,
+    "install-github-app": 1026,
+    "install-slack-app": 1026,
     "drag-and-drop-images": 997,
     "paste-images-mac": 998,
     "double-esc-code-restore": 1006,
     "continue": 1011,
-    "shift-tab": 977,
+    "shift-tab": 1025,
     "image-paste": 997,
     "config-thinking-mode": 18,
     "ultrathink-keyword": 18,
@@ -44,13 +44,13 @@
     "default-permission-mode-config": 1011,
     "agent-flag": 997,
     "feedback-command": 1011,
-    "git-worktrees": 977,
+    "git-worktrees": 1024,
     "color-when-multi-clauding": 999,
     "vscode-command-install": 403,
     "desktop-shortcut": 1022,
     "overage-credit": 1023
   },
-  "promptQueueUseCount": 750,
+  "promptQueueUseCount": 752,
   "cachedStatsigGates": {
     "tengu_prompt_suggestion": false,
     "tengu_year_end_2025_campaign_promo": false
@@ -1798,54 +1798,68 @@
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [
         "PatentPlatformPrices.tsx",
-        "index.ts",
         "PatentCosts.tsx",
+        "index.ts",
         "CreateQuotation.tsx",
         "data.ts"
       ],
-      "exampleFilesGeneratedAt": 1774675356136,
-      "lastCost": 0.02076825,
-      "lastAPIDuration": 4374,
-      "lastAPIDurationWithoutRetries": 4352,
-      "lastToolDuration": 0,
-      "lastDuration": 9489,
-      "lastLinesAdded": 0,
-      "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 340,
-      "lastTotalOutputTokens": 80,
-      "lastTotalCacheCreationInputTokens": 4261,
-      "lastTotalCacheReadInputTokens": 11245,
+      "exampleFilesGeneratedAt": 1775572839298,
+      "lastCost": 0.42682149999999985,
+      "lastAPIDuration": 163735,
+      "lastAPIDurationWithoutRetries": 163505,
+      "lastToolDuration": 37353,
+      "lastDuration": 594816,
+      "lastLinesAdded": 60,
+      "lastLinesRemoved": 16,
+      "lastTotalInputTokens": 370,
+      "lastTotalOutputTokens": 6338,
+      "lastTotalCacheCreationInputTokens": 46278,
+      "lastTotalCacheReadInputTokens": 526310,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 12.87,
-      "lastFpsLow1Pct": 448.48,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
           "inputTokens": 337,
-          "outputTokens": 13,
+          "outputTokens": 12,
           "cacheReadInputTokens": 0,
           "cacheCreationInputTokens": 0,
           "webSearchRequests": 0,
-          "costUSD": 0.000402
+          "costUSD": 0.000397
         },
         "claude-sonnet-4-6": {
-          "inputTokens": 3,
-          "outputTokens": 67,
-          "cacheReadInputTokens": 11245,
-          "cacheCreationInputTokens": 4261,
+          "inputTokens": 33,
+          "outputTokens": 6326,
+          "cacheReadInputTokens": 526310,
+          "cacheCreationInputTokens": 46278,
           "webSearchRequests": 0,
-          "costUSD": 0.02036625
+          "costUSD": 0.4264244999999999
         }
       },
-      "lastSessionId": "63cfa983-5095-43de-8f76-965fd0081afa",
+      "lastSessionId": "e827650c-0d38-4ecf-8575-2f75aaf959bc",
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 105,
-        "frame_duration_ms_min": 0.0469159999997828,
-        "frame_duration_ms_max": 5.950958000000128,
-        "frame_duration_ms_avg": 0.5255305047619199,
-        "frame_duration_ms_p50": 0.4299999999998363,
-        "frame_duration_ms_p95": 1.2101336000001537,
-        "frame_duration_ms_p99": 2.212579999999968
-      }
+        "frame_duration_ms_count": 621,
+        "frame_duration_ms_min": 0.053374999999505235,
+        "frame_duration_ms_max": 17.290790999999444,
+        "frame_duration_ms_avg": 1.6206085458937283,
+        "frame_duration_ms_p50": 1.4458340000019234,
+        "frame_duration_ms_p95": 2.870875000000524,
+        "frame_duration_ms_p99": 6.222125000000574,
+        "pre_tool_hook_duration_ms_count": 4,
+        "pre_tool_hook_duration_ms_min": 0,
+        "pre_tool_hook_duration_ms_max": 0,
+        "pre_tool_hook_duration_ms_avg": 0,
+        "pre_tool_hook_duration_ms_p50": 0,
+        "pre_tool_hook_duration_ms_p95": 0,
+        "pre_tool_hook_duration_ms_p99": 0,
+        "hook_duration_ms_count": 3,
+        "hook_duration_ms_min": 0,
+        "hook_duration_ms_max": 1,
+        "hook_duration_ms_avg": 0.3333333333333333,
+        "hook_duration_ms_p50": 0,
+        "hook_duration_ms_p95": 0.8999999999999999,
+        "hook_duration_ms_p99": 0.98
+      },
+      "lastFpsAverage": 6.1,
+      "lastFpsLow1Pct": 158.2
     },
     "/Users/xuwentao/Projects/tele/paas-controller/.claude/worktrees/elegant-margulis": {
       "allowedTools": [],
@@ -2077,10 +2091,16 @@
         "amount_minor_units": 2000,
         "currency": "USD"
       },
-      "timestamp": 1775572268455
+      "timestamp": 1775572845439
     }
   },
   "migrationVersion": 11,
   "autoUpdatesProtectedForNative": true,
-  "overageCreditUpsellSeenCount": 1
+  "overageCreditUpsellSeenCount": 1,
+  "hasVisitedExtraUsage": true,
+  "companion": {
+    "name": "Tallow",
+    "personality": "A serene, old-soul penguin who wades through your bug reports with preternatural calm, occasionally muttering that most problems are just 'impatience in a new coat.'",
+    "hatchedAt": 1775573013175
+  }
 }
