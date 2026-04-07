@@ -1,5 +1,5 @@
 {
-  "numStartups": 1024,
+  "numStartups": 1029,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -18,16 +18,16 @@
     "status-line": 977,
     "stickers-command": 24,
     "prompt-queue": 16,
-    "enter-to-steer-in-relatime": 977,
-    "todo-list": 997,
+    "enter-to-steer-in-relatime": 1025,
+    "todo-list": 1025,
     "ide-upsell-external-terminal": 1011,
-    "install-github-app": 997,
-    "install-slack-app": 997,
-    "drag-and-drop-images": 997,
+    "install-github-app": 1026,
+    "install-slack-app": 1026,
+    "drag-and-drop-images": 1029,
     "paste-images-mac": 998,
     "double-esc-code-restore": 1006,
     "continue": 1011,
-    "shift-tab": 977,
+    "shift-tab": 1025,
     "image-paste": 997,
     "config-thinking-mode": 18,
     "ultrathink-keyword": 18,
@@ -37,7 +37,7 @@
     "web-app": 1007,
     "mobile-app": 1010,
     "shift-enter-setup": 403,
-    "permissions": 997,
+    "permissions": 1027,
     "rename-conversation": 1011,
     "custom-commands": 997,
     "frontend-design-plugin": 508,
@@ -1724,46 +1724,30 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [],
-      "lastCost": 0.000392,
+      "lastCost": 0,
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 2786,
+      "lastDuration": 2985,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 337,
-      "lastTotalOutputTokens": 11,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
       "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 11.79,
-      "lastFpsLow1Pct": 79.81,
-      "lastModelUsage": {
-        "claude-haiku-4-5-20251001": {
-          "inputTokens": 337,
-          "outputTokens": 11,
-          "cacheReadInputTokens": 0,
-          "cacheCreationInputTokens": 0,
-          "webSearchRequests": 0,
-          "costUSD": 0.000392
-        }
-      },
-      "lastSessionId": "f9d3c874-7968-43ec-a5f2-2f4e5d11489e",
+      "lastFpsAverage": 3.15,
+      "lastFpsLow1Pct": 232.65,
+      "lastModelUsage": {},
+      "lastSessionId": "817645cc-2c42-4d1b-90f9-fd19c9d8a52e",
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 24,
-        "frame_duration_ms_min": 0.038749999999936335,
-        "frame_duration_ms_max": 12.529291999999941,
-        "frame_duration_ms_avg": 1.0265364999999729,
-        "frame_duration_ms_p50": 0.25452099999995426,
-        "frame_duration_ms_p95": 3.5437027000000354,
-        "frame_duration_ms_p99": 10.529365409999961,
-        "hook_duration_ms_count": 1,
-        "hook_duration_ms_min": 385,
-        "hook_duration_ms_max": 385,
-        "hook_duration_ms_avg": 385,
-        "hook_duration_ms_p50": 385,
-        "hook_duration_ms_p95": 385,
-        "hook_duration_ms_p99": 385
+        "frame_duration_ms_count": 7,
+        "frame_duration_ms_min": 0.20595899999989342,
+        "frame_duration_ms_max": 4.298292000000174,
+        "frame_duration_ms_avg": 0.9774642857142624,
+        "frame_duration_ms_p50": 0.45320799999990413,
+        "frame_duration_ms_p95": 3.262842000000066,
+        "frame_duration_ms_p99": 4.091202000000152
       }
     },
     "/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/frosty-mestorf": {
@@ -1804,20 +1788,18 @@
         "data.ts"
       ],
       "exampleFilesGeneratedAt": 1775572839298,
-      "lastCost": 0.2649480999999999,
-      "lastAPIDuration": 129881,
-      "lastAPIDurationWithoutRetries": 129703,
-      "lastToolDuration": 37269,
-      "lastDuration": 403820,
-      "lastLinesAdded": 59,
-      "lastLinesRemoved": 15,
-      "lastTotalInputTokens": 361,
-      "lastTotalOutputTokens": 5354,
-      "lastTotalCacheCreationInputTokens": 15326,
-      "lastTotalCacheReadInputTokens": 422922,
+      "lastCost": 0.42682149999999985,
+      "lastAPIDuration": 163735,
+      "lastAPIDurationWithoutRetries": 163505,
+      "lastToolDuration": 37353,
+      "lastDuration": 594816,
+      "lastLinesAdded": 60,
+      "lastLinesRemoved": 16,
+      "lastTotalInputTokens": 370,
+      "lastTotalOutputTokens": 6338,
+      "lastTotalCacheCreationInputTokens": 46278,
+      "lastTotalCacheReadInputTokens": 526310,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 9.49,
-      "lastFpsLow1Pct": 230.62,
       "lastModelUsage": {
         "claude-haiku-4-5-20251001": {
           "inputTokens": 337,
@@ -1828,38 +1810,41 @@
           "costUSD": 0.000397
         },
         "claude-sonnet-4-6": {
-          "inputTokens": 24,
-          "outputTokens": 5342,
-          "cacheReadInputTokens": 422922,
-          "cacheCreationInputTokens": 15326,
+          "inputTokens": 33,
+          "outputTokens": 6326,
+          "cacheReadInputTokens": 526310,
+          "cacheCreationInputTokens": 46278,
           "webSearchRequests": 0,
-          "costUSD": 0.26455109999999993
+          "costUSD": 0.4264244999999999
         }
       },
       "lastSessionId": "e827650c-0d38-4ecf-8575-2f75aaf959bc",
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 3822,
-        "frame_duration_ms_min": 0.04137500000069849,
-        "frame_duration_ms_max": 8.626417000006768,
-        "frame_duration_ms_avg": 1.1168851682365941,
-        "frame_duration_ms_p50": 1.0362290000011853,
-        "frame_duration_ms_p95": 2.2146285999988318,
-        "frame_duration_ms_p99": 3.9871826600024356,
-        "pre_tool_hook_duration_ms_count": 20,
+        "frame_duration_ms_count": 621,
+        "frame_duration_ms_min": 0.053374999999505235,
+        "frame_duration_ms_max": 17.290790999999444,
+        "frame_duration_ms_avg": 1.6206085458937283,
+        "frame_duration_ms_p50": 1.4458340000019234,
+        "frame_duration_ms_p95": 2.870875000000524,
+        "frame_duration_ms_p99": 6.222125000000574,
+        "pre_tool_hook_duration_ms_count": 4,
         "pre_tool_hook_duration_ms_min": 0,
-        "pre_tool_hook_duration_ms_max": 1,
-        "pre_tool_hook_duration_ms_avg": 0.05,
+        "pre_tool_hook_duration_ms_max": 0,
+        "pre_tool_hook_duration_ms_avg": 0,
         "pre_tool_hook_duration_ms_p50": 0,
-        "pre_tool_hook_duration_ms_p95": 0.05000000000000071,
-        "pre_tool_hook_duration_ms_p99": 0.8099999999999987,
-        "hook_duration_ms_count": 10,
+        "pre_tool_hook_duration_ms_p95": 0,
+        "pre_tool_hook_duration_ms_p99": 0,
+        "hook_duration_ms_count": 3,
         "hook_duration_ms_min": 0,
         "hook_duration_ms_max": 1,
-        "hook_duration_ms_avg": 0.1,
+        "hook_duration_ms_avg": 0.3333333333333333,
         "hook_duration_ms_p50": 0,
-        "hook_duration_ms_p95": 0.5499999999999989,
-        "hook_duration_ms_p99": 0.9100000000000001
-      }
+        "hook_duration_ms_p95": 0.8999999999999999,
+        "hook_duration_ms_p99": 0.98
+      },
+      "lastFpsAverage": 6.1,
+      "lastFpsLow1Pct": 158.2,
+      "hasCompletedProjectOnboarding": true
     },
     "/Users/xuwentao/Projects/tele/paas-controller/.claude/worktrees/elegant-margulis": {
       "allowedTools": [],
@@ -1930,6 +1915,74 @@
       "projectOnboardingSeenCount": 0,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false
+    },
+    "/Users/xuwentao/Projects/github/dotfile": {
+      "allowedTools": [],
+      "mcpContextUris": [],
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": false,
+      "projectOnboardingSeenCount": 0,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "exampleFiles": [],
+      "lastCost": 0.052574649999999994,
+      "lastAPIDuration": 17049,
+      "lastAPIDurationWithoutRetries": 17023,
+      "lastToolDuration": 57,
+      "lastDuration": 55580,
+      "lastLinesAdded": 5,
+      "lastLinesRemoved": 5,
+      "lastTotalInputTokens": 360,
+      "lastTotalOutputTokens": 600,
+      "lastTotalCacheCreationInputTokens": 6587,
+      "lastTotalCacheReadInputTokens": 62138,
+      "lastTotalWebSearchRequests": 0,
+      "lastFpsAverage": 8.66,
+      "lastFpsLow1Pct": 238.64,
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 354,
+          "outputTokens": 14,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.000424
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 6,
+          "outputTokens": 586,
+          "cacheReadInputTokens": 62138,
+          "cacheCreationInputTokens": 6587,
+          "webSearchRequests": 0,
+          "costUSD": 0.05215064999999999
+        }
+      },
+      "lastSessionId": "54336d9d-6648-4341-ae73-28eea876ef8f",
+      "lastSessionMetrics": {
+        "frame_duration_ms_count": 474,
+        "frame_duration_ms_min": 0.056916999998065876,
+        "frame_duration_ms_max": 9.200333000000683,
+        "frame_duration_ms_avg": 0.7477475063291026,
+        "frame_duration_ms_p50": 0.751729499999783,
+        "frame_duration_ms_p95": 1.2455629499982022,
+        "frame_duration_ms_p99": 4.183706229998906,
+        "pre_tool_hook_duration_ms_count": 4,
+        "pre_tool_hook_duration_ms_min": 0,
+        "pre_tool_hook_duration_ms_max": 0,
+        "pre_tool_hook_duration_ms_avg": 0,
+        "pre_tool_hook_duration_ms_p50": 0,
+        "pre_tool_hook_duration_ms_p95": 0,
+        "pre_tool_hook_duration_ms_p99": 0,
+        "hook_duration_ms_count": 4,
+        "hook_duration_ms_min": 0,
+        "hook_duration_ms_max": 0,
+        "hook_duration_ms_avg": 0,
+        "hook_duration_ms_p50": 0,
+        "hook_duration_ms_p95": 0,
+        "hook_duration_ms_p99": 0
+      }
     }
   },
   "officialMarketplaceAutoInstallAttempted": true,
@@ -1955,6 +2008,9 @@
     ],
     "xu-wentao/patent-platform": [
       "/Users/xuwentao/Projects/github/patent-platform"
+    ],
+    "xu-wentao/dotfile": [
+      "/Users/xuwentao/Projects/github/dotfile"
     ]
   },
   "mcpServers": {
@@ -2020,8 +2076,8 @@
       "lastUsedAt": 1773201355218
     },
     "statusline": {
-      "usageCount": 3,
-      "lastUsedAt": 1775572282718
+      "usageCount": 4,
+      "lastUsedAt": 1775576472810
     },
     "document-skills:doc-coauthoring": {
       "usageCount": 1,
@@ -2091,7 +2147,7 @@
         "amount_minor_units": 2000,
         "currency": "USD"
       },
-      "timestamp": 1775572845439
+      "timestamp": 1775576463874
     }
   },
   "migrationVersion": 11,

@@ -1,5 +1,5 @@
 {
-  "numStartups": 1027,
+  "numStartups": 1029,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -23,7 +23,7 @@
     "ide-upsell-external-terminal": 1011,
     "install-github-app": 1026,
     "install-slack-app": 1026,
-    "drag-and-drop-images": 997,
+    "drag-and-drop-images": 1029,
     "paste-images-mac": 998,
     "double-esc-code-restore": 1006,
     "continue": 1011,
@@ -39,7 +39,7 @@
     "shift-enter-setup": 403,
     "permissions": 1027,
     "rename-conversation": 1011,
-    "custom-commands": 997,
+    "custom-commands": 1029,
     "frontend-design-plugin": 508,
     "default-permission-mode-config": 1011,
     "agent-flag": 997,
@@ -1724,46 +1724,30 @@
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
       "exampleFiles": [],
-      "lastCost": 0.000392,
+      "lastCost": 0,
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 2786,
+      "lastDuration": 2985,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 337,
-      "lastTotalOutputTokens": 11,
+      "lastTotalInputTokens": 0,
+      "lastTotalOutputTokens": 0,
       "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 11.79,
-      "lastFpsLow1Pct": 79.81,
-      "lastModelUsage": {
-        "claude-haiku-4-5-20251001": {
-          "inputTokens": 337,
-          "outputTokens": 11,
-          "cacheReadInputTokens": 0,
-          "cacheCreationInputTokens": 0,
-          "webSearchRequests": 0,
-          "costUSD": 0.000392
-        }
-      },
-      "lastSessionId": "f9d3c874-7968-43ec-a5f2-2f4e5d11489e",
+      "lastFpsAverage": 3.15,
+      "lastFpsLow1Pct": 232.65,
+      "lastModelUsage": {},
+      "lastSessionId": "817645cc-2c42-4d1b-90f9-fd19c9d8a52e",
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 24,
-        "frame_duration_ms_min": 0.038749999999936335,
-        "frame_duration_ms_max": 12.529291999999941,
-        "frame_duration_ms_avg": 1.0265364999999729,
-        "frame_duration_ms_p50": 0.25452099999995426,
-        "frame_duration_ms_p95": 3.5437027000000354,
-        "frame_duration_ms_p99": 10.529365409999961,
-        "hook_duration_ms_count": 1,
-        "hook_duration_ms_min": 385,
-        "hook_duration_ms_max": 385,
-        "hook_duration_ms_avg": 385,
-        "hook_duration_ms_p50": 385,
-        "hook_duration_ms_p95": 385,
-        "hook_duration_ms_p99": 385
+        "frame_duration_ms_count": 7,
+        "frame_duration_ms_min": 0.20595899999989342,
+        "frame_duration_ms_max": 4.298292000000174,
+        "frame_duration_ms_avg": 0.9774642857142624,
+        "frame_duration_ms_p50": 0.45320799999990413,
+        "frame_duration_ms_p95": 3.262842000000066,
+        "frame_duration_ms_p99": 4.091202000000152
       }
     },
     "/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/frosty-mestorf": {
@@ -1859,7 +1843,8 @@
         "hook_duration_ms_p99": 0.98
       },
       "lastFpsAverage": 6.1,
-      "lastFpsLow1Pct": 158.2
+      "lastFpsLow1Pct": 158.2,
+      "hasCompletedProjectOnboarding": true
     },
     "/Users/xuwentao/Projects/tele/paas-controller/.claude/worktrees/elegant-margulis": {
       "allowedTools": [],
@@ -2091,8 +2076,8 @@
       "lastUsedAt": 1773201355218
     },
     "statusline": {
-      "usageCount": 3,
-      "lastUsedAt": 1775572282718
+      "usageCount": 4,
+      "lastUsedAt": 1775576472810
     },
     "document-skills:doc-coauthoring": {
       "usageCount": 1,
@@ -2162,7 +2147,7 @@
         "amount_minor_units": 2000,
         "currency": "USD"
       },
-      "timestamp": 1775572845439
+      "timestamp": 1775576463874
     }
   },
   "migrationVersion": 11,
