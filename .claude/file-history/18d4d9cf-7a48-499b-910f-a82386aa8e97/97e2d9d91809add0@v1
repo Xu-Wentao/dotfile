@@ -1,0 +1,355 @@
+# AISuite 模块改进建议
+
+> 日期: 2026-03-31
+> 模块: `pkg/backend/aisuite/`
+> 状态: 提案
+
+---
+
+## 背景
+
+当前 AISuite 模块的数据来源完全依赖 **Harbor 镜像仓库实时查询** + **集群内 Helm Release 状态查询**，没有本地缓存或索引。随着套件数量增长和并发请求增加，存在查询效率低、状态不一致等问题。
+
+以下按优先级列出改进项。
+
+---
+
+## P0: 套件合并逻辑 Bug
+
+**文件**: `pkg/backend/aisuite/controller/aisuite.go` — `disruptiveMergeAiSuites`
+
+**问题**: 合并 registry 和 cluster 两个来源的套件列表时，逻辑依赖于"哪个列表更大"来决定谁覆盖谁。当 registry 列表更大时，已部署的套件会保留 registry 中的 `undeployed` 状态，导致用户看到错误的部署状态。
+
+**现有代码**:
+```go
+if exist && clusterLarger {
+    result[idx] = suite  // 只在 cluster 列表更大时才用 cluster 数据覆盖
+}
+```
+
+**改进方案**: 合并时始终以集群状态为准（集群中有部署记录的套件优先展示集群状态），不依赖列表大小：
+
+```go
+func mergeAiSuites(suitesInRegistry, suitesInCluster []*aisuite.ProfileAISuite) []*aisuite.ProfileAISuite {
+    clusterMap := make(map[string]*aisuite.ProfileAISuite, len(suitesInCluster))
+    for _, s := range suitesInCluster {
+        clusterMap[s.Name] = s
+    }
+
+    result := make([]*aisuite.ProfileAISuite, 0, len(suitesInRegistry)+len(suitesInCluster))
+    seen := make(map[string]bool)
+
+    for _, s := range suitesInRegistry {
+        if cs, ok := clusterMap[s.Name]; ok {
+            result = append(result, cs) // 集群状态优先
+        } else {
+            result = append(result, s)
+        }
+        seen[s.Name] = true
+    }
+    for _, s := range suitesInCluster {
+        if !seen[s.Name] {
+            result = append(result, s) // 集群中有但 registry 中没有的
+        }
+    }
+    return result
+}
+```
+
+---
+
+## P1: listAISuitesInRegistry 存在 N+1 查询
+
+**文件**: `pkg/backend/aisuite/controller/aisuite.go` — `filterAISuitesFromRepos`
+
+**问题**: 先 `ListRepositories` 获取所有 repo，然后对每个 repo 逐一调用 `ListArtifacts` 获取最新 chart artifact。如果有 N 个套件，就会发 N+1 次 Harbor API 请求。
+
+**改进方案**:
+
+方案 A — 减少 API 调用:
+- 如果 Harbor API 支持 project 级别的 artifact 列表查询（带 `Type=CHART` 过滤），可用一次调用获取整个 project 下所有 chart artifacts，然后在内存中按 repo 分组取最新版本。
+
+方案 B — 引入本地索引表:
+- 新建 `aisuite_catalog` 表，通过定时任务（cron）将 Harbor 中的套件元数据同步到数据库。
+- list 接口直接查本地表，避免实时调用 Harbor。
+- 同步周期建议 5~10 分钟，可接受短暂的数据延迟。
+- 表结构参考:
+  ```sql
+  CREATE TABLE aisuite_catalog (
+      id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+      name         VARCHAR(256) NOT NULL,
+      description  TEXT,
+      app_version  VARCHAR(128),
+      chart_version VARCHAR(128),
+      digest       VARCHAR(256),
+      push_time    TIMESTAMP,
+      synced_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE KEY uk_name_chart_version (name, chart_version)
+  );
+  ```
+
+---
+
+## P1: ORAS 拉取 schema / README 无缓存
+
+**文件**: `pkg/backend/aisuite/controller/aisuite.go` — `getCustomValueSchema`, `GetAISuiteReadme`
+
+**问题**: 每次调用 `GetAISuite` 都会通过 ORAS 从 registry 拉取整个 chart 包并解压提取 `tap_aisuite_values.json`；`GetAISuiteReadme` 同理拉取 `README.md`。这是重量级网络+IO 操作，详情页每次打开都会触发。
+
+**改进方案**: 使用内存缓存，以 `name@digest` 为 key（digest 不变则内容不变，天然缓存失效策略）:
+
+```go
+type Controller struct {
+    db              *gorm.DB
+    apiserverGetter manager.ApiserverGetter
+    schemaCache     sync.Map // key: "chartName@sha256:xxx" -> value: json.RawMessage
+    readmeCache     sync.Map // key: "chartName:chartVersion" -> value: string
+}
+```
+
+如果内存占用是顾虑，可使用带 TTL + 大小上限的 LRU 缓存（如 `github.com/hashicorp/golang-lru`）。
+
+---
+
+## P2: getSuiteRegistry 重复查询数据库
+
+**文件**: `pkg/backend/aisuite/controller/aisuite.go` — `getSuiteRegistry`
+
+**问题**: 每次 API 请求中 `getSuiteRegistry` 被调用 1~2 次，每次都执行 `SELECT ... ORDER BY created_at LIMIT 1`。该值几乎不变，却反复查询。
+
+**改进方案**: 在 Controller 中缓存 registry 信息:
+
+```go
+type Controller struct {
+    db              *gorm.DB
+    apiserverGetter manager.ApiserverGetter
+
+    registryMu    sync.RWMutex
+    suiteRegistry *db.Repository
+    registryTTL   time.Time
+}
+
+func (c *Controller) getSuiteRegistry() (*db.Repository, error) {
+    c.registryMu.RLock()
+    if c.suiteRegistry != nil && time.Now().Before(c.registryTTL) {
+        defer c.registryMu.RUnlock()
+        return c.suiteRegistry, nil
+    }
+    c.registryMu.RUnlock()
+
+    c.registryMu.Lock()
+    defer c.registryMu.Unlock()
+    // double check
+    if c.suiteRegistry != nil && time.Now().Before(c.registryTTL) {
+        return c.suiteRegistry, nil
+    }
+    reg, err := loadSuiteRegistryFromDB(c.db)
+    if err != nil {
+        return nil, err
+    }
+    c.suiteRegistry = reg
+    c.registryTTL = time.Now().Add(5 * time.Minute)
+    return reg, nil
+}
+```
+
+---
+
+## P2: Suite Registry 的选择逻辑脆弱
+
+**文件**: `pkg/backend/aisuite/controller/aisuite.go` — `getSuiteRegistry`
+
+**问题**: 当前通过 `ORDER BY created_at ASC LIMIT 1` 取最早创建的仓库作为 suite registry。这个约定没有显式保证:
+- 误操作创建了无关仓库（且创建时间更早）会导致指向错误 registry。
+- 数据迁移时 created_at 被重置，行为会改变。
+
+**改进方案** (任选其一):
+
+1. **字段标记**: 在 `repository` 表增加 `purpose` / `type` 字段，AISuite registry 设为 `"ai_suite_registry"`，查询时按此字段过滤。
+2. **配置项**: 使用系统配置表存储 suite registry 的 ID 或名称，查询时直接按 ID 获取。
+3. **约定项目名**: 如果 Harbor project 名已是固定的 `zzzz_internal_ai_suite_helm_charts`，可以改为按 `Address + project_name` 匹配仓库，而非依赖创建顺序。
+
+---
+
+## P2: Harbor Client 重复创建
+
+**文件**: `pkg/backend/aisuite/controller/aisuite.go` — `filterAISuitesFromRepos` 等多处
+
+**问题**: `harbor.GetRegistryClient` 每次调用都会解密密码、创建新的 HTTP client 和 Harbor API client。在 `filterAISuitesFromRepos` 中，虽然循环内复用了同一个 client，但每次请求到达时仍然会重新创建。多个函数各自创建自己的 client。
+
+**改进方案**: 将 HarborClient 缓存在 Controller 中，与 suiteRegistry 缓存配合使用。registry 信息变更时同步刷新 client:
+
+```go
+type Controller struct {
+    // ...
+    harborClient *harbor.HarborClient
+}
+```
+
+---
+
+## P0: 操作后查询状态不一致
+
+**文件**:
+- `pkg/backend/cluster/manager/helmrelease.go` — `doHelmReleaseRequestAsync`
+- `pkg/apiserver/helm/controller/helm_release.go` / `pkg/helm/releases.go` — apiserver 侧 helm 调用
+
+### 问题分析
+
+操作提交后，用户刷新页面（触发 List/Get 查询）会看到旧状态，几秒后才更新。根因是两层异步叠加：
+
+1. **paas-controller 层**: `doHelmReleaseRequestAsync` 使用 `go func()` fire-and-forget 发送 HTTP 请求，连请求都没发出去就返回了。
+2. **apiserver 层**: helm install/upgrade 设置了 `Wait=true`，会阻塞到资源 Ready 才返回 HTTP 响应（最长 10 分钟），paas-controller 不得不用 `go func()` 来避免 API 超时。
+
+完整链路：
+```
+paas-controller 立即返回
+  → goroutine 发 HTTP
+  → apiserver 阻塞等 helm 完成 (可能几分钟)
+  → 返回
+
+用户此时刷新页面 → 查集群 → 拿到旧状态 ❌
+```
+
+### Helm SDK 内部操作顺序
+
+Helm SDK 的 `install.RunWithContext()` 内部步骤如下：
+
+```
+① 创建 release 记录 (status = pending-install)     ← 写 K8s Secret，极快
+② 进入 performInstall()
+   ├─ pre-install hooks
+   ├─ apply 资源到集群                               ← 几秒
+   ├─ if Wait=true: 轮询等待资源 Ready (每 2s)       ← 慢，可能几分钟
+   ├─ post-install hooks
+   └─ 标记 deployed/failed，更新 release 记录
+```
+
+**关键点**: 步骤 ① 在 `performInstall()` 调用前完成。release 记录创建后，集群中就已经存在 `pending-install` 状态的 release，后续查询可以查到。
+
+Upgrade（`pending-upgrade`）和 Uninstall（`uninstalling`）结构相同。
+
+> **注意**: `Wait=false` 不可行。设置 `Wait=false` 时，Helm SDK 在 apply 资源后会跳过就绪检查，直接标记为 `deployed` 返回，丢失了中间过渡态，不符合需求。
+
+### 改进方案：apiserver 异步执行 + 同步等待 release 记录创建
+
+核心思路：在 apiserver 层将 Helm 操作拆为「同步确认受理」+「异步等待就绪」，利用 Helm SDK 自身的 release 生命周期管理状态。
+
+#### apiserver 侧改造
+
+```go
+// 改造前：整个操作同步阻塞
+func (c *Controller) InstallRelease(req *models.InstallOrUpgradeReleaseRequest) (*release.Release, error) {
+    installClient.Wait = req.Wait  // true → 阻塞到 Ready，可能 10 分钟
+    return installClient.RunWithContext(ctx, chart, values)
+}
+
+// 改造后：异步执行 + 同步等待 release 记录出现
+func (c *Controller) InstallRelease(req *models.InstallOrUpgradeReleaseRequest) (*release.Release, error) {
+    installClient.Wait = true  // 保留完整生命周期 (pending → deployed/failed)
+
+    // 后台启动完整的 helm install
+    go func() {
+        rel, err := installClient.RunWithContext(ctx, chart, values)
+        if err != nil {
+            log.Errorf("async helm install failed for %s/%s: %v", req.Namespace, req.Name, err)
+        }
+    }()
+
+    // 同步轮询 release 存储，等 pending-install 状态的 release 出现
+    rel, err := pollForRelease(cfg.Releases, req.Name, release.StatusPendingInstall, 15*time.Second)
+    if err != nil {
+        return nil, fmt.Errorf("helm install failed to create release record: %w", err)
+    }
+    return rel, nil  // 此时 release 已在集群中，状态为 pending-install
+}
+```
+
+`pollForRelease` 实现：
+
+```go
+func pollForRelease(storage driver.Secrets, name string, expectedStatus release.Status, timeout time.Duration) (*release.Release, error) {
+    deadline := time.After(timeout)
+    ticker := time.NewTicker(200 * time.Millisecond)
+    defer ticker.Stop()
+
+    for {
+        select {
+        case <-deadline:
+            return nil, fmt.Errorf("timeout waiting for release %s to reach status %s", name, expectedStatus)
+        case <-ticker.C:
+            rel, err := storage.Last(name)
+            if err == nil && rel.Info.Status == expectedStatus {
+                return rel, nil
+            }
+        }
+    }
+}
+```
+
+Upgrade 和 Uninstall 同理：
+- Upgrade: 等待 `StatusPendingUpgrade`
+- Uninstall: 等待 `StatusUninstalling`
+
+#### paas-controller 侧改造
+
+apiserver 改造后几秒内即可返回 HTTP 响应，paas-controller 不再需要 `go func()` 包装：
+
+```go
+// 改造前：fire-and-forget，吞掉所有错误
+func doHelmReleaseRequestAsync(client *ApiserverClient, method, path string, reqBody interface{}) error {
+    go func() {
+        if err := client.Do(method, path, nil, reqBody, nil); err != nil {
+            log.Errorf("helm release async request failed: %v", err)
+        }
+    }()
+    return nil
+}
+
+// 改造后：同步调用，几秒返回，能感知提交失败
+func doHelmReleaseRequest(client *ApiserverClient, method, path string, reqBody interface{}) error {
+    return client.Do(method, path, nil, reqBody, nil)
+}
+```
+
+### 改造后的完整状态流转
+
+```
+用户点击安装
+  → paas-controller 同步调 apiserver（几秒返回）
+  → apiserver 后台启动 helm install (Wait=true)
+  → apiserver 同步 poll，~200ms 后发现 release 已创建 (pending-install)
+  → apiserver 返回 202
+  → paas-controller 返回给前端
+
+用户刷新页面
+  → 查集群 → pending-install ✅
+
+helm 异步等待资源就绪...
+资源 Ready → helm 自动更新 release 为 deployed
+资源超时  → helm 自动更新 release 为 failed
+
+用户再次刷新
+  → 查集群 → deployed / failed ✅
+```
+
+### 方案优势
+
+1. **不修改 Helm SDK 内部逻辑**，只在 apiserver 调用层做编排
+2. **保留完整 Helm 生命周期**（pending → deployed/failed），状态由 Helm 自己管理，不需要额外的 overlay cache
+3. **paas-controller 侧改动极小**：去掉 `go func()`，改为同步调用
+4. **额外收益**：paas-controller 能感知到操作提交是否失败（当前 fire-and-forget 模式下错误被吞掉了）
+
+---
+
+## 附录: 涉及文件清单
+
+| 文件 | 改动类型 |
+|------|----------|
+| `pkg/backend/aisuite/controller/aisuite.go` | 主要修改（paas-controller 业务逻辑） |
+| `pkg/backend/cluster/manager/helmrelease.go` | 去掉 `doHelmReleaseRequestAsync` 的 `go func()` |
+| `pkg/helm/releases.go` | apiserver 侧：拆分 helm 操作为同步确认 + 异步等待 |
+| `pkg/apiserver/helm/controller/helm_release.go` | apiserver 侧：适配新的返回模式 |
+| `pkg/models/aisuite/aisuite.go` | 可能新增缓存相关字段 |
+| `pkg/db/repository.go` | 可能增加 `purpose` 字段 |
+| `pkg/harbor/registry.go` | 可能调整 client 复用逻辑 |

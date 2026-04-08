@@ -1,0 +1,339 @@
+package devmachine
+
+import (
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+	corev1 "k8s.io/api/core/v1"
+
+	devmachinemodel "code.srdcloud.cn/TDP-PaaS/tap/tap-edu-backend/internal/model/devmachine"
+)
+
+var _ = Describe("Resource Builder", func() {
+	Describe("buildVolumes", func() {
+		Context("when WebIDE is VSCode", func() {
+			It("should create 1 volumes: dev-volume", func() {
+				volumes := buildVolumes(devmachinemodel.WebIDEVSCode)
+
+				Expect(volumes).To(HaveLen(1))
+
+				// 验证 dev-volume emptyDir
+				Expect(volumes[0].Name).To(Equal(devVolumeName))
+				Expect(volumes[0].EmptyDir).NotTo(BeNil())
+			})
+		})
+
+		Context("when WebIDE is Jupyter", func() {
+			It("should create 2 volumes including bootstrap-jupyter", func() {
+				volumes := buildVolumes(devmachinemodel.WebIDEJupyter)
+
+				Expect(volumes).To(HaveLen(2))
+
+				// 验证基础卷
+				Expect(volumes[0].Name).To(Equal(devVolumeName))
+
+				// 验证 Jupyter 专属卷
+				Expect(volumes[1].Name).To(Equal(bootstrapJupyterVolumeName))
+				Expect(volumes[1].EmptyDir).NotTo(BeNil())
+			})
+		})
+	})
+
+	Describe("buildInitEnv", func() {
+		Context("when WebIDE is VSCode", func() {
+			It("should set DEV_MODE to vscode", func() {
+				envVars := buildInitEnv(devmachinemodel.WebIDEVSCode)
+
+				Expect(envVars).To(HaveLen(1))
+				Expect(envVars[0].Name).To(Equal("DEV_MODE"))
+				Expect(envVars[0].Value).To(Equal("vscode"))
+			})
+		})
+
+		Context("when WebIDE is Jupyter", func() {
+			It("should set DEV_MODE to jupyter", func() {
+				envVars := buildInitEnv(devmachinemodel.WebIDEJupyter)
+
+				Expect(envVars).To(HaveLen(1))
+				Expect(envVars[0].Name).To(Equal("DEV_MODE"))
+				Expect(envVars[0].Value).To(Equal("jupyter"))
+			})
+		})
+	})
+
+	Describe("buildInitCommand", func() {
+		It("should use script mode", func() {
+			cmd := buildInitCommand()
+
+			Expect(cmd).To(HaveLen(3))
+			Expect(cmd[0]).To(Equal("sh"))
+			Expect(cmd[1]).To(Equal("-c"))
+			Expect(cmd[2]).To(ContainSubstring("/dev-bootstrap/entrypoint.sh"))
+		})
+	})
+
+	Describe("buildInitVolumeMounts", func() {
+		Context("when WebIDE is VSCode", func() {
+			It("should mount dev-volume", func() {
+				mounts := buildInitVolumeMounts(devmachinemodel.WebIDEVSCode)
+
+				Expect(mounts).To(HaveLen(1))
+				Expect(mounts[0].Name).To(Equal(devVolumeName))
+				Expect(mounts[0].MountPath).To(Equal("/opt/dev"))
+			})
+		})
+
+		Context("when WebIDE is Jupyter", func() {
+			It("should mount dev-volume and bootstrap-jupyter", func() {
+				mounts := buildInitVolumeMounts(devmachinemodel.WebIDEJupyter)
+
+				Expect(mounts).To(HaveLen(2))
+				Expect(mounts[0].Name).To(Equal(devVolumeName))
+				Expect(mounts[1].Name).To(Equal(bootstrapJupyterVolumeName))
+				Expect(mounts[1].MountPath).To(Equal("/mnt/"))
+			})
+		})
+	})
+
+	Describe("buildJupyterEnv", func() {
+		It("should include all required environment variables", func() {
+			envVars := buildJupyterEnv("")
+
+			Expect(envVars).To(HaveLen(4))
+
+			// 验证 DEV_MODE
+			Expect(envVars[0].Name).To(Equal("DEV_MODE"))
+			Expect(envVars[0].Value).To(Equal("jupyter"))
+
+			// 验证 WORKDIR
+			Expect(envVars[1].Name).To(Equal("WORKDIR"))
+			Expect(envVars[1].Value).To(Equal(defaultWorkDir))
+
+			// 验证 POD_NAMESPACE
+			Expect(envVars[2].Name).To(Equal("POD_NAMESPACE"))
+			Expect(envVars[2].ValueFrom).NotTo(BeNil())
+			Expect(envVars[2].ValueFrom.FieldRef.FieldPath).To(Equal("metadata.namespace"))
+
+			// 验证 DEPLOYMENT_NAME
+			Expect(envVars[3].Name).To(Equal("DEPLOYMENT_NAME"))
+			Expect(envVars[3].ValueFrom).NotTo(BeNil())
+			Expect(envVars[3].ValueFrom.FieldRef.FieldPath).To(Equal("metadata.labels['app']"))
+		})
+
+		It("should use the requested workDir when provided", func() {
+			envVars := buildJupyterEnv("/workspace/project")
+
+			Expect(envVars[1].Name).To(Equal("WORKDIR"))
+			Expect(envVars[1].Value).To(Equal("/workspace/project"))
+		})
+	})
+
+	Describe("buildVSCodeEnv", func() {
+		It("should include all required environment variables", func() {
+			envVars := buildVSCodeEnv("")
+
+			Expect(envVars).To(HaveLen(4))
+
+			// 验证 DEV_MODE
+			Expect(envVars[0].Name).To(Equal("DEV_MODE"))
+			Expect(envVars[0].Value).To(Equal("vscode"))
+
+			// 验证其他环境变量与 Jupyter 一致
+			Expect(envVars[1].Name).To(Equal("WORKDIR"))
+			Expect(envVars[1].Value).To(Equal(defaultWorkDir))
+			Expect(envVars[2].Name).To(Equal("POD_NAMESPACE"))
+			Expect(envVars[3].Name).To(Equal("DEPLOYMENT_NAME"))
+		})
+	})
+
+	Describe("buildJupyterVolumeMounts", func() {
+		It("should mount all required volumes", func() {
+			mounts := buildJupyterVolumeMounts()
+
+			Expect(mounts).To(HaveLen(2))
+
+			// 验证 dev-volume
+			Expect(mounts[0].Name).To(Equal(devVolumeName))
+			Expect(mounts[0].MountPath).To(Equal("/opt/dev"))
+
+			// 验证 bootstrap-jupyter
+			Expect(mounts[1].Name).To(Equal(bootstrapJupyterVolumeName))
+			Expect(mounts[1].MountPath).To(Equal("/dev-bootstrap/tools/jupyter"))
+			Expect(mounts[1].SubPath).To(Equal("jupyter"))
+
+		})
+	})
+
+	Describe("buildVSCodeVolumeMounts", func() {
+		It("should mount all required volumes", func() {
+			mounts := buildVSCodeVolumeMounts()
+
+			Expect(mounts).To(HaveLen(1))
+
+			// 验证 dev-volume
+			Expect(mounts[0].Name).To(Equal(devVolumeName))
+			Expect(mounts[0].MountPath).To(Equal("/opt/dev"))
+		})
+	})
+
+	Describe("buildInitContainerCommand", func() {
+		It("should use script startup mode with DEV_MODE", func() {
+			cmd := buildInitContainerCommand()
+
+			Expect(cmd).To(HaveLen(3))
+			Expect(cmd[0]).To(Equal("bash"))
+			Expect(cmd[1]).To(Equal("-c"))
+			Expect(cmd[2]).To(ContainSubstring("DEV_MODE"))
+			Expect(cmd[2]).To(ContainSubstring("/opt/dev/scripts/start-"))
+			Expect(cmd[2]).To(ContainSubstring("${DEV_MODE}"))
+		})
+	})
+
+	Describe("buildUserContainerCommand", func() {
+		It("should use script startup mode with DEV_MODE", func() {
+			cmd := buildUserContainerCommand()
+			Expect(cmd).To(HaveLen(3))
+			Expect(cmd[0]).To(Equal("bash"))
+			Expect(cmd[1]).To(Equal("-c"))
+			Expect(cmd[2]).To(ContainSubstring("DEV_MODE"))
+		})
+	})
+
+	Describe("buildPodSpec", func() {
+		var request *devmachinemodel.CreateDevmachineRequest
+
+		BeforeEach(func() {
+			request = &devmachinemodel.CreateDevmachineRequest{
+				Namespace: "test-ns",
+				Name:      "test-dev",
+				ImageName: "registry.example.com/test:latest",
+				CPU:       "2",
+				Memory:    "4",
+			}
+		})
+
+		Context("when WebIDE is VSCode", func() {
+			It("should configure VSCode-specific volumes and containers", func() {
+				request.WebIDE = devmachinemodel.WebIDEVSCode
+				request.WorkDir = "/workspace/custom"
+				podSpec := buildPodSpec(request, "mock-image:latest")
+
+				// 验证调度器
+				Expect(podSpec.SchedulerName).To(Equal(volcanoSchedulerName))
+
+				// 验证卷数量（1个基础卷）
+				Expect(podSpec.Volumes).To(HaveLen(1))
+
+				// 验证 InitContainer
+				Expect(podSpec.InitContainers).To(HaveLen(1))
+				Expect(podSpec.InitContainers[0].Name).To(Equal(initContainerName))
+
+				// 验证容器
+				Expect(podSpec.Containers).To(HaveLen(1))
+				Expect(podSpec.Containers[0].Name).To(Equal("vscode"))
+				Expect(podSpec.Containers[0].Env).To(ContainElement(corev1.EnvVar{Name: "WORKDIR", Value: "/workspace/custom"}))
+			})
+		})
+
+		Context("when WebIDE is Jupyter", func() {
+			It("should configure Jupyter-specific volumes and containers", func() {
+				request.WebIDE = devmachinemodel.WebIDEJupyter
+				podSpec := buildPodSpec(request, "mock-image:latest")
+
+				// 验证卷数量（2个卷，包含 bootstrap-jupyter）
+				Expect(podSpec.Volumes).To(HaveLen(2))
+
+				// 验证容器
+				Expect(podSpec.Containers).To(HaveLen(1))
+				Expect(podSpec.Containers[0].Name).To(Equal("jupyter"))
+			})
+		})
+
+		Context("when WebIDE is not specified", func() {
+			It("should default to Jupyter", func() {
+				request.WebIDE = ""
+				podSpec := buildPodSpec(request, "mock-image:latest")
+
+				// 应该使用 Jupyter 配置（2个卷）
+				Expect(podSpec.Volumes).To(HaveLen(2))
+				Expect(podSpec.Containers[0].Name).To(Equal("jupyter"))
+			})
+		})
+
+		Context("when VSCode with one RW storage entry", func() {
+			It("should append shared-rw-volume giving 2 total volumes", func() {
+				request.WebIDE = devmachinemodel.WebIDEVSCode
+				request.Storage = []devmachinemodel.Storage{
+					{StoragePath: "user/data", MountPath: "/data", ReadOnly: false},
+				}
+				podSpec := buildPodSpec(request, "mock-image:latest")
+
+				// 1 基础卷 (dev-volume) + 1 共享RW卷 = 2
+				Expect(podSpec.Volumes).To(HaveLen(2))
+				volumeNames := make([]string, len(podSpec.Volumes))
+				for i, v := range podSpec.Volumes {
+					volumeNames[i] = v.Name
+				}
+				Expect(volumeNames).To(ContainElement(devVolumeName))
+				Expect(volumeNames).To(ContainElement(SharedRWVolumeName))
+			})
+		})
+
+		Context("when Jupyter with RW and RO storage entries", func() {
+			It("should append both shared volumes giving 4 total volumes", func() {
+				request.WebIDE = devmachinemodel.WebIDEJupyter
+				request.Storage = []devmachinemodel.Storage{
+					{StoragePath: "user/data", MountPath: "/data", ReadOnly: false},
+					{StoragePath: "shared/models", MountPath: "/models", ReadOnly: true},
+				}
+				podSpec := buildPodSpec(request, "mock-image:latest")
+
+				// 2 基础卷 + 2 共享卷 = 4
+				Expect(podSpec.Volumes).To(HaveLen(4))
+			})
+		})
+
+		Context("when Jupyter with multiple RW storage entries", func() {
+			It("should deduplicate shared volumes giving 3 total volumes", func() {
+				request.WebIDE = devmachinemodel.WebIDEJupyter
+				request.Storage = []devmachinemodel.Storage{
+					{StoragePath: "project/a", MountPath: "/a", ReadOnly: false},
+					{StoragePath: "project/b", MountPath: "/b", ReadOnly: false},
+					{StoragePath: "project/c", MountPath: "/c", ReadOnly: false},
+				}
+				podSpec := buildPodSpec(request, "mock-image:latest")
+
+				// 2 基础卷 + 1 共享RW卷（去重）= 3，而非5
+				Expect(podSpec.Volumes).To(HaveLen(3))
+				volumeNames := make([]string, len(podSpec.Volumes))
+				for i, v := range podSpec.Volumes {
+					volumeNames[i] = v.Name
+				}
+				Expect(volumeNames).To(ContainElement(SharedRWVolumeName))
+				Expect(volumeNames).NotTo(ContainElement(SharedROVolumeName))
+			})
+		})
+
+		Context("when Jupyter with multiple RW storage entries", func() {
+			It("should create one volumeMount per storage entry each with its own subPath", func() {
+				request.WebIDE = devmachinemodel.WebIDEJupyter
+				request.Storage = []devmachinemodel.Storage{
+					{StoragePath: "project/a", MountPath: "/a", ReadOnly: false},
+					{StoragePath: "project/b", MountPath: "/b", ReadOnly: false},
+				}
+				podSpec := buildPodSpec(request, "mock-image:latest")
+
+				// 找到容器的所有 shared-rw-volume 挂载
+				container := podSpec.Containers[0]
+				var sharedMounts []corev1.VolumeMount
+				for _, vm := range container.VolumeMounts {
+					if vm.Name == SharedRWVolumeName {
+						sharedMounts = append(sharedMounts, vm)
+					}
+				}
+				Expect(sharedMounts).To(HaveLen(2))
+				subPaths := []string{sharedMounts[0].SubPath, sharedMounts[1].SubPath}
+				Expect(subPaths).To(ContainElements("project/a", "project/b"))
+			})
+		})
+	})
+})

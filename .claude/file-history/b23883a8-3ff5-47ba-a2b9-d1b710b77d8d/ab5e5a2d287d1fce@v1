@@ -1,0 +1,1022 @@
+<template>
+  <a-tabs
+    v-model:activeKey="activeKey"
+    type="editable-card"
+    :hide-add="props.params.type === 'AscendJob'"
+    @edit="onEdit"
+  >
+    <a-tab-pane
+      v-for="item in props.containers"
+      :key="item.key"
+      :tab="item.name"
+      :closable="props.params.type !== 'AscendJob'"
+      class="task-tab-pane"
+    >
+      <div class="card-tab-containers">
+        <a-collapse v-model:activeKey="collapseKey">
+          <a-collapse-panel
+            key="1"
+            header="环境配置"
+          >
+            <a-form
+              :colon="false"
+              :label-col="{ style: 'width: 90px; flex-shrink: 0; max-width: 96px;' }"
+              :wrapper-col="{ style: 'flex: 1;' }"
+            >
+              <a-form-item
+                label="容器名称"
+                required
+              >
+                <a-input
+                  v-model:value="item.name"
+                  :disabled="route.params.title === '编辑' && !(item.show) || (props.params.type === 'AscendJob')"
+                  autocomplete="off"
+                />
+              </a-form-item>
+              <a-form-item
+                name="imageType"
+                required
+              >
+                <template #label>
+                  <span>镜像</span>
+                  <a-tooltip placement="top">
+                    <template #title>
+                      <div>
+                        <div><strong>预制镜像：</strong>预制镜像为平台为该场景预先集成的镜像，可以选择预制镜像直接启动服务</div>
+                        <div><strong>自定义镜像：</strong>为用户自己通过镜像中心上传镜像，镜像制作需要符合该场景需要镜像</div>
+                      </div>
+                    </template>
+                    <QuestionCircleOutlined style="color: #999; cursor: pointer; margin-left: 4px;" />
+                  </a-tooltip>
+                </template>
+                <a-radio-group
+                  v-model:value="item.imageConfig.imageType"
+                  @change="handleImageTypeChange(item.imageConfig)"
+                >
+                  <a-radio value="custom">
+                    自定义镜像
+                  </a-radio>
+                  <a-radio value="preset">
+                    预制镜像
+                  </a-radio>
+                </a-radio-group>
+              </a-form-item>
+              <a-form-item label="">
+                <div style="display: flex;padding-left:100px">
+                  <a-select
+                    v-model:value="item.imageConfig.repositoryId"
+                    :options="imageRepoOptions"
+                    placeholder="请选择镜像仓库"
+                    style="flex: 1"
+                    @change="handleImageRepoChange"
+                  />
+                  <a-cascader
+                    v-model:value="item.imageConfig.imageCascader"
+                    :options="imageCascaderOptions"
+                    :load-data="loadImageChildren"
+                    change-on-select
+                    placeholder="请选择镜像-目录"
+                    style="flex: 1;margin-left: 10px;"
+                  />
+                </div>
+              </a-form-item>
+              <a-form-item
+                label="镜像拉取策略"
+                name="imagePullPolicy"
+                required
+              >
+                <a-radio-group v-model:value="item.imagePullPolicy">
+                  <a-radio value="IfNotPresent">
+                    IfNotPresent
+                  </a-radio>
+                  <a-radio value="Always">
+                    Always
+                  </a-radio>
+                  <a-radio value="Never">
+                    Never
+                  </a-radio>
+                </a-radio-group>
+              </a-form-item>
+              <a-form-item
+                label="启动命令"
+                name="command"
+                class="no-error-style"
+              >
+                <div class="command-box">
+                  <div class="command-row">
+                    <a-input
+                      v-model:value="item.commandShell"
+                      placeholder="/bin/bash"
+                      class="command-shell"
+                    />
+                    <span class="command-separator">-c</span>
+                    <a-input
+                      v-model:value="item.commandText"
+                      placeholder="sleep 3000"
+                      class="command-text"
+                    />
+                  </div>
+                </div>
+              </a-form-item>
+              <a-form-item label="环境变量">
+                <div style="background: #f7f9fc; padding: 8px; border-radius: 8px">
+                  <div
+                    v-for="(data, index) in item.environmentVarsData"
+                    :key="index"
+                    style="display: flex;align-items: center;margin-bottom: 10px;"
+                  >
+                    <a-input
+                      v-model:value="data.key"
+                      style="flex: 1;"
+                      placeholder="key"
+                      autocomplete="off"
+                    />
+                    <a-input
+                      v-model:value="data.value"
+                      style="flex: 1; margin-left: 10px;"
+                      placeholder="value"
+                      autocomplete="off"
+                    />
+                    <div>
+                      <MinusCircleOutlined
+                        class="outlined"
+                        @click="handleDelete(index, '环境变量', item)"
+                      />
+                    </div>
+                  </div>
+                  <a-button
+                    type="text"
+                    style="color: #3570ee"
+                    @click="handleAdd('环境变量', item,)"
+                  >
+                    <PlusCircleOutlined /> 添加
+                  </a-button>
+                </div>
+              </a-form-item>
+              <a-form-item label="端口配置">
+                <a-table
+                  :data-source="item.ports"
+                  :columns="columns"
+                  :pagination="false"
+                >
+                  <template #bodyCell="{ column, record, index }">
+                    <template v-if="column.dataIndex === 'containerPort'">
+                      <a-input-number
+                        v-model:value.number="record.containerPort"
+                        style="width: 180px;"
+                        min="1"
+                        max="100000"
+                        :precision="0"
+                        :step="1"
+                        placeholder="请输入容器端口"
+                        autocomplete="off"
+                      />
+                    </template>
+                    <template v-if="column.dataIndex === 'name'">
+                      <a-input
+                        v-model:value="record.name"
+                        :disabled="route.params.title === '编辑' && !(record.show)"
+                        placeholder="请输入端口名"
+                        autocomplete="off"
+                      />
+                    </template>
+                    <template v-if="column.dataIndex === 'protocol'">
+                      <a-select
+                        v-model:value="record.protocol"
+                        :options="protocolOptions"
+                        placeholder="请选择通信方式"
+                      />
+                    </template>
+                    <template v-if="column.dataIndex === 'operate'">
+                      <MinusCircleOutlined
+                        class="outlined"
+                        @click="handleDelete(index, '端口配置', item)"
+                      />
+                    </template>
+                  </template>
+                </a-table>
+                <div
+                  class="btn-add"
+                  @click="handleAdd('端口配置', item)"
+                >
+                  <PlusCircleOutlined style="color: #3570EE;font-size: 16px;" />
+                  <span>添加</span>
+                </div>
+              </a-form-item>
+              <a-form-item label="特权容器">
+                <a-switch v-model:checked="item.privileged" />
+              </a-form-item>
+            </a-form>
+          </a-collapse-panel>
+          <a-collapse-panel key="2">
+            <template #header>
+              <span>资源配置</span>
+              <a-tooltip placement="top">
+                <template #title>
+                  <div>资源配置需注意多容器、多副本等多机多卡任务，分配资源总量不得超过队列上限配额，所需资源逼近或超过队列上限配额可能造成任务调度失败。</div>
+                </template>
+                <QuestionCircleOutlined style="color: #999; cursor: pointer; margin-left: 4px;" />
+              </a-tooltip>
+            </template>
+            <a-form
+              :colon="false"
+              :label-col="{ style: 'width: 110px; flex-shrink: 0;max-width: 96px;' }"
+              :wrapper-col="{ style: 'flex: 1;' }"
+            >
+              <a-row>
+                <a-col :span="24">
+                  <a-form-item
+                    label="CPU"
+                    required
+                  >
+                    <div style="display:flex;flex-direction: column;">
+                      <a-input-number
+                        v-model:value="item.cpu"
+                        min="0"
+                        :max="cpuQuotaInfo.capability"
+                        placeholder="请输入CPU"
+                        :precision="1"
+                        :step="0.1"
+                        :addon-after="'核'"
+                      />
+                      <span style="color: #999; margin-top: 8px">
+                        队列预留/申请/上限配额：
+                        <span style="color:#52C41A">{{ cpuQuotaInfo.guarantee }}</span>
+                        <span style="color:#FA8C16;">/{{ cpuQuotaInfo.deserved }}</span>
+                        <span style="color:#F5222D;">/{{ cpuQuotaInfo.capability }}</span>core
+                        (已使用{{ cpuQuotaInfo.allocated }}core)
+                      </span>
+                    </div>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="24">
+                  <a-form-item
+                    label="内存"
+                    required
+                  >
+                    <div style="display: flex;flex-direction: column;">
+                      <a-input-number
+                        v-model:value="item.memory"
+                        min="0"
+                        :max="memoryQuotaInfo.capability"
+                        placeholder="请输入内存"
+                        :precision="1"
+                        :step="0.1"
+                        :addon-after="'GiB'"
+                      />
+                      <span style="color: #999; margin-top: 8px">
+                        队列预留/申请/上限配额：
+                        <span style="color:#52C41A">{{ memoryQuotaInfo.guarantee }}</span>
+                        <span style="color:#FA8C16;">/{{ memoryQuotaInfo.deserved }}</span>
+                        <span style="color:#F5222D;">/{{ memoryQuotaInfo.capability }}</span>GiB
+                        (已使用{{ memoryQuotaInfo.allocated }}GiB)
+                      </span>
+                    </div>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="24">
+                  <a-form-item
+                    label="算力卡"
+                  >
+                    <div style="display: flex; align-items: center; width: 100%">
+                      <a-select
+                        v-model:value="item.gpuName"
+                        :options="gpuOptions"
+                        placeholder="请选择GPU型号"
+                        allow-clear
+                        style="flex: 2"
+                        @change="handleGpuChange"
+                      />
+                      <a-input-number
+                        v-model:value="item.gpu"
+                        min="0"
+                        :max="gpuQuotaInfo.capability"
+                        placeholder="请输入GPU"
+                        style="flex: 2; margin-left: 8px"
+                        :disabled="!item.gpuName"
+                        :addon-after="'卡'"
+                        :precision="0"
+                        :step="1"
+                      />
+
+                      <a-select
+                        v-if="gpuType === '2'"
+                        v-model:value="item.gpuRatio"
+                        :options="gpuRatioOptions"
+                        placeholder="请选择单卡占比"
+                        style="flex: 2;margin-left: 8px"
+                      />
+                    </div>
+                    <div style="color: #999;margin-top:8px">
+                      队列预留/申请/上限配额：
+                      <span style="color:#52C41A">{{ gpuQuotaInfo.guarantee }}</span>
+                      <span style="color:#FA8C16;">/{{ gpuQuotaInfo.deserved }}</span>
+                      <span style="color:#F5222D;">/{{ gpuQuotaInfo.capability }}</span>卡
+                      (已使用{{ gpuQuotaInfo.allocated }}卡)
+                    </div>
+                  </a-form-item>
+                </a-col>
+                <a-col :span="24">
+                  <a-form-item>
+                    <template #label>
+                      <span>数据卷</span>
+                      <a-tooltip placement="top">
+                        <template #title>
+                          <div>
+                            本地路径支持用户自定义输入，可能存在根目录写满导致节点服务异常的情况，平台侧无法对用户本地盘进行管理，请特别关注并注意路径存储情况并及时清理
+                          </div>
+                        </template>
+                        <QuestionCircleOutlined style="color: #999; cursor: pointer; margin-left: 4px;" />
+                      </a-tooltip>
+                    </template>
+                    <div class="partBox">
+                      <div
+                        v-for="(items, idx) in item.storage"
+                        :key="'storage-' + idx"
+                        class="partBox_ls"
+                      >
+                        <a-select
+                          v-model:value="items.storageType"
+                          :options="storageTypeOptions"
+                          placeholder="请选择类型"
+                          allow-clear
+                          style="width: 30%;"
+                        />
+                        <template v-if="items.storageType === 'tdsc'">
+                          <a-cascader
+                            v-model:value="items.storagePoolId"
+                            :options="storagePoolCascaderOptions"
+                            :load-data="loadStoragePoolChildren"
+                            change-on-select
+                            placeholder="请选择存储池-网盘"
+                            style="flex: 1"
+                            :display-render="displayStoragePoolRender"
+                          />
+                          <span>挂载到</span>
+                          <a-input
+                            v-model:value="items.mountPath"
+                            autocomplete="off"
+                            placeholder="请输入容器路径"
+                            style="flex: 1"
+                          />
+                        </template>
+                        <template v-else-if="items.storageType === 'hostPath'">
+                          <a-input
+                            v-model:value="items.storagePath"
+                            autocomplete="off"
+                            placeholder="请输入本地路径"
+                            style="flex: 1"
+                          />
+                          <a-input
+                            v-model:value="items.mountPath"
+                            autocomplete="off"
+                            placeholder="请输入容器路径"
+                            style="flex: 1"
+                          />
+                        </template>
+                        <a-button
+                          v-if="item.storage.length > 1"
+                          type="link"
+                          danger
+                          @click="removeStorage(item, idx)"
+                        >
+                          <MinusCircleOutlined />
+                        </a-button>
+                      </div>
+                      <a-button
+                        type="text"
+                        style="margin-top: 0px; color: #3570ee"
+                        @click="addStorage(item)"
+                      >
+                        <PlusCircleOutlined /> 添加
+                      </a-button>
+                    </div>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </a-form>
+          </a-collapse-panel>
+        </a-collapse>
+      </div>
+    </a-tab-pane>
+  </a-tabs>
+</template>
+
+<script lang="ts" setup>
+import { ref, defineProps, defineEmits, onMounted, watch, inject, nextTick, computed } from 'vue';
+import { message } from 'ant-design-vue';
+import { PlusCircleOutlined, MinusCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons-vue';
+import { imagesProjects } from '@/services/api/propertyManage/warehouseManage';
+import { getMirrorManageList } from '@/services/api/propertyManage/mirrorManage';
+import { usePermissionStore } from '@/store/modules/permission';
+import { imagesFormat, storagePoolsList } from '@/services/api/operationManage/machineManage';
+import { getCloud } from '@/services/api/propertyManage/cloudManage';
+import { getStatusApi } from '@/services/common';
+import { useRoute, useRouter } from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
+
+const permissionStore = usePermissionStore();
+
+defineExpose({
+  getExamData: val => getExamData(val)
+});
+
+const props = defineProps({
+  containers: {
+    type: Array,
+    default: []
+  },
+  params: {
+    type: Object,
+    default: {}
+  },
+  imageRepoList: {
+    type: Array,
+    default: []
+  }
+});
+const activeKey = ref('1');
+const collapseKey = ref(['1', '2']);
+const columns = [
+  {
+    title: '容器端口',
+    dataIndex: 'containerPort',
+    key: 'containerPort'
+  },
+  {
+    title: '端口名',
+    dataIndex: 'name',
+    key: 'name'
+  },
+  {
+    title: '通信方式',
+    dataIndex: 'protocol',
+    key: 'protocol',
+    width: 250
+  },
+  {
+    title: '操作',
+    key: 'operate',
+    dataIndex: 'operate',
+    slot: 'operate',
+    width: 80
+  }
+];
+
+const imageRepoOptions = ref([]); // 镜像仓库下拉框
+const imageCascaderOptions = ref([]); // 镜像级联选择框
+const imageType = ref('custom');
+const repositoryId = ref('');
+const gpuType = ref('');
+const gpuName = ref('');
+// 数据卷部分类型下拉框 options
+const storageTypeOptions = ref([
+  { label: '网盘', value: 'tdsc' },
+  { label: '本地盘', value: 'hostPath' }
+]);
+const storagePoolCascaderOptions = ref([]);
+const protocolOptions = ref([]);
+const gpuRatioOptions = Array.from({ length: 9 }, (_, i) => ({
+  label: `${(i + 1) * 10}%`,
+  value: (i + 1) * 10
+}));
+
+
+// 是否隐藏“网盘”类型（推理服务场景）
+const hideNetworkVolume = computed(() => route.path.startsWith('/operationManage/inferenceService'));
+if (hideNetworkVolume.value) {
+  storageTypeOptions.value = storageTypeOptions.value.filter(item => item.value !== 'tdsc');
+}
+
+// CPU最大可分配数量
+const cpuMax = computed(() => {
+  const res = props.params.selectedQueueResource?.resources?.cpu;
+  if (!res) return undefined;
+  const remain = res.capability - res.allocated;
+  return remain > 0 ? remain : 0;
+});
+
+// 内存最大可分配数量
+const memoryMax = computed(() => {
+  const res = props.params.selectedQueueResource?.resources?.memory;
+  if (!res) return undefined;
+  const cap = res.capability;
+  const alloc = res.allocated;
+  const remain = cap - alloc;
+  return remain > 0 ? remain : 0;
+});
+
+// GPU选项列表
+const gpuOptions = computed(() => {
+  const gpus = props.params.selectedQueueResource?.resources?.gpus;
+  if (!Array.isArray(gpus)) return [];
+  return gpus.map(item => ({
+    label: item.displayName,
+    value: item.name,
+    type: item.type,
+    capability: item.capability,
+    allocated: item.allocated,
+    guarantee: item.guarantee,
+    deserved: item.deserved
+  }));
+});
+
+// GPU最大可分配数量
+const gpuMax = computed(() => {
+  const gpu = gpuOptions.value.find(item => item.value === gpuName.value);
+  if (!gpu) return undefined;
+  const remain = gpu.capability - gpu.allocated;
+  return remain > 0 ? remain : 0;
+});
+
+// 当前容器
+const currentContainer = computed(() => {
+  return props.containers.find(c => c.key === activeKey.value);
+});
+
+// 格式化数值为一位小数
+const formatToOneDecimal = (value: any): string => {
+  if (value === null || value === undefined || value === '') return '-';
+  const num = Number(value);
+  if (isNaN(num)) return '-';
+  return num.toFixed(1);
+};
+
+// CPU配额信息
+const cpuQuotaInfo = computed(() => {
+  const res = props.params.selectedQueueResource?.resources?.cpu;
+  if (!res) return { guarantee: '-', deserved: '-', capability: '-', allocated: '-' };
+  return {
+    guarantee: formatToOneDecimal(res.guarantee),
+    deserved: formatToOneDecimal(res.deserved),
+    capability: formatToOneDecimal(res.capability),
+    allocated: formatToOneDecimal(res.allocated)
+  };
+});
+
+// 内存配额信息
+const memoryQuotaInfo = computed(() => {
+  const res = props.params.selectedQueueResource?.resources?.memory;
+  if (!res) return { guarantee: '-', deserved: '-', capability: '-', allocated: '-' };
+  return {
+    guarantee: formatToOneDecimal(res.guarantee),
+    deserved: formatToOneDecimal(res.deserved),
+    capability: formatToOneDecimal(res.capability),
+    allocated: formatToOneDecimal(res.allocated)
+  };
+});
+
+// GPU配额信息
+const gpuQuotaInfo = computed(() => {
+  if (!currentContainer.value?.gpuName) {
+    return { guarantee: '-', deserved: '-', capability: '-', allocated: '-' };
+  }
+  const gpu = gpuOptions.value.find(item => item.value === currentContainer.value.gpuName);
+  if (!gpu) return { guarantee: '-', deserved: '-', capability: '-', allocated: '-' };
+  return {
+    guarantee: formatToOneDecimal(gpu.guarantee),
+    deserved: formatToOneDecimal(gpu.deserved),
+    capability: formatToOneDecimal(gpu.capability),
+    allocated: formatToOneDecimal(gpu.allocated)
+  };
+});
+
+// 获取通信方式
+const fetchProtocol = async () => {
+  const res:any = await getStatusApi({ type: 'customJobsProtocol' });
+  if (res.code === '00000' && Array.isArray(res.respBody)) {
+    protocolOptions.value = res.respBody.map(item => ({
+      label: item.value,
+      value: item.key
+    }));
+  }
+};
+
+// 获取存储池根级数据
+const fetchStoragePoolRoot = async () => {
+  const res:any = await storagePoolsList(permissionStore.curRegion);
+  if (res.code === '00000' && Array.isArray(res.respBody?.storagePools)) {
+    storagePoolCascaderOptions.value = res.respBody.storagePools.map(item => ({
+      label: item.name,
+      value: item.id,
+      isLeaf: false
+    }));
+  }
+};
+
+// 加载存储池级联选择器的子级数据
+const loadStoragePoolChildren = async (selectedOptions) => {
+  const targetOption = selectedOptions[selectedOptions.length - 1];
+  targetOption.loading = true;
+
+  try {
+    // currentPath 始终是一级（存储池）的 ID
+    const currentPath = selectedOptions[0].value;
+
+    // 从获取二级开始，使用当前选中项的 path 作为 folderPath
+    const params = { current: 1, size: 1000 };
+    if (selectedOptions.length >= 2) {
+      // 使用当前选中项的 path 作为 folderPath
+      const currentLevelPath = targetOption.value;
+      params.folderPath = currentLevelPath;
+    }
+
+    const res = await getCloud(permissionStore.curProject, currentPath, params);
+    targetOption.loading = false;
+
+    if (res.code === '00000' && Array.isArray(res.respBody?.data)) {
+      // 过滤出文件夹类型的数据
+      const folderItems = res.respBody.data.filter(item => item.type === '文件夹');
+      targetOption.children = folderItems.map(item => ({
+        label: item.name,
+        value: item.path,
+        isLeaf: false // 设置为false，允许继续加载下一级
+      }));
+
+      // 如果没有文件夹，则设置为叶子节点
+      if (folderItems.length === 0) {
+        targetOption.isLeaf = true;
+      }
+    } else {
+      targetOption.children = [];
+      targetOption.isLeaf = true;
+    }
+  } catch (error) {
+    targetOption.loading = false;
+    console.error('加载存储池子级数据失败:', error);
+    targetOption.children = [];
+    targetOption.isLeaf = true;
+  }
+  storagePoolCascaderOptions.value = [...storagePoolCascaderOptions.value];
+};
+
+const tabAdd = () => {
+  activeKey.value = `${props.containers.length + 1}`;
+  props.containers.push(
+    {
+      key: activeKey.value,
+      name: `container${activeKey.value}`,
+      replicas: '',
+      show: true,
+      // 默认启动命令
+      commandShell: '/bin/bash',
+      commandText: 'sleep 3000',
+      imageConfig: {
+        imageType: 'custom',
+        repositoryId: null,
+        imageCascader: [],
+        domain: '',
+        project: '',
+        imageName: ''
+      },
+      imagePullPolicy: 'IfNotPresent',
+      environmentVarsData: [{ key: '', value: '' }],
+      ports: [],
+      cpu: '',
+      memory: '',
+      volumes: [{ storageType: '', storagePath: '', mountPath: '' }],
+      storage: [{ storagePoolId: 0, storageType: null, storagePath: '', mountPath: '' }]
+    }
+  );
+};
+
+// 存储池级联选择器显示渲染函数
+const displayStoragePoolRender = (labels) => {
+  // 检查参数是否存在
+  if (!labels.labels || !Array.isArray(labels.labels)) {
+    return null;
+  }
+  // 如果只选择了一级（存储池），不显示任何内容
+  if (labels.labels.length === 1) {
+    return null;
+  }
+  // 如果选择了二级或更多，显示最后一级的内容
+  return labels.labels && labels.labels.length > 0 ? labels.labels.join('/') : null;
+};
+
+const tabRemove = (targetKey: string) => {
+  if (props.containers.length == 1) {
+    message.warning('至少需要保留一条容器数据');
+    return;
+  }
+  let lastIndex = 0;
+  props.containers.forEach((pane, i) => {
+    if (pane.key === targetKey) {
+      lastIndex = i - 1;
+    }
+  });
+  const index = props.containers.findIndex(item => item.key === targetKey);
+  if (index !== -1) {
+    props.containers.splice(index, 1);
+  }
+  if (props.containers.length && activeKey.value === targetKey) {
+    if (lastIndex >= 0) {
+      activeKey.value = props.containers[lastIndex].key;
+    } else {
+      activeKey.value = props.containers[0].key;
+    }
+  }
+};
+
+const onEdit = (targetKey, action) => {
+  // AscendJob 禁止新增/删除容器
+  if (props.params.type === 'AscendJob') return;
+  if (action === 'add') {
+    tabAdd();
+  } else {
+    tabRemove(targetKey);
+  }
+};
+
+// 添加网盘
+const addStorage = (row) => {
+  row.storage.push({ storagePoolId: 0, storageType: null, storagePath: '', mountPath: '' });
+};
+const removeStorage = (row, idx) => {
+  if (row.storage.length > 1) row.storage.splice(idx, 1);
+};
+
+// 添加标签/注解
+const handleAdd = (type: any, row:any) => {
+  if (type == '环境变量') {
+    row.environmentVarsData.push({ key: '', value: '' });
+  } else if (type == '端口配置') {
+    row.ports.push({ name: '', containerPort: '', protocol: null, show: true });
+  } else if (type == '数据卷') {
+    row.volumes.push({ storageType: '', storagePath: '', mountPath: '' });
+  }
+};
+// 删除标签/注解
+const handleDelete = (index: number, type: any, row:any) => {
+  if (type == '环境变量') {
+    row.environmentVarsData.splice(index, 1);
+  } else if (type == '端口配置') {
+    row.ports.splice(index, 1);
+  } else if (type == '数据卷') {
+    if (row.volumes.length <= 1) {
+      message.warning('至少需要保留一条端口配置');
+      return;
+    }
+    row.volumes.splice(index, 1);
+  }
+};
+
+const fetchImageRepos = async () => {
+  const res:any = await getMirrorManageList({ page: 1, pageSize: 1000 });
+  if (res.code === '00000' && Array.isArray(res.respBody.data)) {
+    permissionStore.spinning = false;
+    props.params.imageRepoList = res.respBody.data;
+    imageRepoOptions.value = res.respBody.data.map(item => ({
+      label: item.name,
+      value: item.id
+    }));
+  }
+};
+
+const loadImageChildren = async (selectedOptions) => {
+  const targetOption = selectedOptions[selectedOptions.length - 1];
+  targetOption.loading = true;
+  // 选择第一级（镜像）后，调用接口获取第二级（目录）选项
+  try {
+    const res:any = await imagesFormat(repositoryId.value, selectedOptions[0].label);
+    targetOption.loading = false;
+    if (res.code === '00000' && Array.isArray(res.respBody.data)) {
+      targetOption.children = res.respBody.data.map(item => ({
+        label: item.imageName,
+        value: item.imageName,
+        isLeaf: true
+      }));
+    } else {
+      targetOption.children = [];
+    }
+  } catch (error) {
+    targetOption.loading = false;
+    targetOption.children = [];
+  }
+  imageCascaderOptions.value = [...imageCascaderOptions.value];
+};
+
+const handleImageRepoChange = async (val) => {
+  repositoryId.value = val;
+  // 根据当前镜像类型决定调用参数
+
+  const query = imageType.value === 'preset' ? { project: 'preset-job-images' } : undefined;
+  const res:any = await imagesProjects(val, query);
+  if (res.code === '00000' && Array.isArray(res.respBody.data)) {
+    imageCascaderOptions.value = res.respBody.data.map(item => ({
+      label: item.name,
+      value: item.name,
+      isLeaf: false
+    }));
+  }
+};
+// 切换类型时重置容器 tabs 激活项
+watch(() => props.params.type, () => {
+  activeKey.value = '1';
+});
+const handleImageTypeChange = async (val) => {
+  imageType.value = val.imageType;
+  val.imageRepo = null as any;
+  val.imageCascader = null as any;
+  val.repositoryId = null as any;
+  if (repositoryId.value != '') {
+    if (imageType.value === 'preset') {
+      const res:any = await imagesProjects(repositoryId.value, { project: 'preset-job-images' });
+      if (res.code === '00000' && Array.isArray(res.respBody.data)) {
+        imageCascaderOptions.value = res.respBody.data.map(item => ({
+          label: item.name,
+          value: item.name,
+          isLeaf: false
+        }));
+      }
+    } else if (imageType.value === 'custom') {
+      const res:any = await imagesProjects(repositoryId.value);
+      if (res.code === '00000' && Array.isArray(res.respBody.data)) {
+        imageCascaderOptions.value = res.respBody.data.map(item => ({
+          label: item.name,
+          value: item.name,
+          isLeaf: false
+        }));
+      }
+    }
+  }
+};
+
+// 处理GPU型号切换
+// val 为 k8s resource name，即 gpuResource 的 key，用于从队列 GPU 资源中匹配对应记录
+const handleGpuChange = (val) => {
+  const gpus = props.params.selectedQueueResource?.resources?.gpus;
+  const gpu = Array.isArray(gpus) ? gpus.find(item => item.name === val) : null;
+  if (gpu) {
+    gpuName.value = String(gpu.name);
+    gpuType.value = String(gpu.type);
+    props.containers.forEach((item) => {
+      if (item.key == activeKey.value) {
+        item.gpu = 1;
+      }
+    });
+  } else {
+    gpuName.value = '';
+    gpuType.value = '';
+    props.containers.forEach((item) => {
+      if (item.key == activeKey.value) {
+        item.gpu = '';
+      }
+    });
+  }
+};
+
+const getExamData = (val) => {
+  if (val.name != '') {
+    const id = val.tasks[0].containers[0].imageConfig.repositoryId;
+    const { gpuName } = val.tasks[0].containers[0];
+    const image = val.tasks[0].containers[0].imageConfig.project;
+    const { command } = val.tasks[0].containers[0];
+
+    if (image == 'preset-job-images') {
+      imageType.value = 'preset';
+    } else {
+      imageType.value = 'custom';
+    }
+    // 处理命令数据映射（不设默认，缺失则置空）
+    if (Array.isArray(command) && command.length >= 1) {
+      props.containers.forEach((container) => {
+        container.commandShell = command[0] || '';
+        container.commandText = command.length >= 3 ? (command[2] || '') : '';
+      });
+    }
+
+    handleImageRepoChange(id);
+    handleGpuChange(gpuName);
+  }
+};
+
+onMounted(async () => {
+  await fetchImageRepos();
+  await fetchStoragePoolRoot();
+  await fetchProtocol();
+});
+</script>
+
+<style lang="scss" scoped>
+.btn-add {
+    margin: 16px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    span {
+        margin-left: 5px;
+        color: #3570EE;
+        font-size: 14px;
+    }
+}
+
+:deep() {
+  .ant-collapse {
+    background-color:#FFF;
+    border:none;
+  }
+  .ant-collapse-item {
+    border:none;
+  }
+  .ant-collapse-content {
+    border:none;
+  }
+
+  /* 隐藏所有错误提示 */
+  .ant-form-item-explain {
+    display: none;
+  }
+
+  /* 或者只隐藏特定表单的错误提示 */
+  .custom-form-item .ant-form-item-explain {
+    display: none;
+  }
+  .no-error-style .ant-form-item-explain {
+    display: none;
+  }
+  .no-error-style.ant-form-item-has-error .ant-input {
+    border-color: #d9d9d9 !important;
+  }
+  /* Focus 状态 */
+  .no-error-style .ant-input:focus,
+  .no-error-style.ant-form-item-has-error .ant-input:focus,
+  .no-error-style .ant-input-focused,
+  .no-error-style.ant-form-item-has-error .ant-input-focused {
+    border-color: #1890ff !important;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2) !important;
+  }
+  /* 使整个头部不可点击 */
+  .ant-collapse-header {
+    pointer-events: none;
+  }
+
+  /* 只允许箭头图标可点击 */
+  .ant-collapse-arrow {
+    pointer-events: auto;
+    margin-right: 8px;
+  }
+}
+:deep(.ant-row) {
+  flex-wrap: wrap !important;
+}
+
+:deep(.ant-tabs-nav-add) {
+  background: #F7F9FC !important;
+}
+:deep(.ant-tabs-tab) {
+  background: #F7F9FC !important;
+}
+:deep(.ant-tabs-tab-active) {
+  background: #ffffff !important;
+}
+.outlined {
+  color: red;
+  font-size: 16px;
+  margin-left: 5px;
+}
+.task-tab-pane {
+  /* 给每个 task 面板一个最小高度，避免新增/切换时整体区域高度从 0 突然撑起导致屏闪 */
+  min-height: 600px;
+}
+.partBox {
+  margin-bottom: 8px;
+  width: 100%;
+  background: #f7f9fc;
+  padding: 8px;
+  border-radius: 8px;
+  .partBox_ls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px
+  }
+}
+
+.command-box {
+  background: #f7f9fc;
+  padding: 12px 12px;
+  border-radius: 8px;
+}
+.command-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.command-shell {
+  width: 30%;
+}
+.command-separator {
+  font-size: 14px;
+  line-height: 22px;
+  color: #666;
+  margin: 0 8px;
+  flex-shrink: 0;
+}
+.command-text {
+  width: 60%;
+}
+</style>

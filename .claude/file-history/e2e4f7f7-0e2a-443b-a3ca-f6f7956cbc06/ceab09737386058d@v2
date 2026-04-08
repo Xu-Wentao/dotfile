@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WORKDIR="${WORKDIR:-workdir}"
+# Ensure WORKDIR is absolute; if not, place it under HOME
+[[ "${WORKDIR}" != /* ]] && WORKDIR="${HOME}/${WORKDIR}"
+NAMESPACE="${POD_NAMESPACE:-default}"
+NAME="${DEPLOYMENT_NAME:-dev-machine}"
+PORT="${JUPYTER_PORT:-8888}"
+
+if [ ! -d "${WORKDIR}" ]; then
+   echo "[INFO] WORKDIR '${WORKDIR}' does not exist, creating..."
+   mkdir -p "${WORKDIR}"
+fi
+
+# 将只读目录拷贝到工作目录
+if [ -n "${RO_MOUNT_PATHS:-}" ]; then
+  IFS=',' read -ra _ro_paths <<< "${RO_MOUNT_PATHS}"
+  for _src in "${_ro_paths[@]}"; do
+    _dirname="$(basename "${_src}")"
+    _dest="${WORKDIR}/${_dirname}"
+    echo "[INFO] copying read-only dir: ${_src} -> ${_dest}"
+    mkdir -p "${_dest}"
+    cp -a "${_src}/." "${_dest}/"
+  done
+  unset _ro_paths _src _dirname _dest
+fi
+
+exec /dev-bootstrap/tools/jupyter/bin/jupyter lab \
+  --ip=0.0.0.0 \
+  --port="${PORT}" \
+  --notebook-dir="${WORKDIR}" \
+  --no-browser \
+  --NotebookApp.token='' \
+  --ServerApp.disable_check_xsrf=True \
+  --ServerApp.allow_origin='*' \
+  --ServerApp.allow_remote_access=True \
+  --NotebookApp.password='' \
+  --NotebookApp.allow_root=True \
+  --ServerApp.base_url="/${NAME}"

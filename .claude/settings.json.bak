@@ -1,0 +1,27 @@
+{
+  "env": {},
+  "model": "opus",
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
+  },
+  "enabledPlugins": {
+    "codex@openai-codex": true,
+    "cocoindex-skills@cocoindex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "cocoindex": {
+      "source": {
+        "source": "github",
+        "repo": "cocoindex-io/cocoindex-claude"
+      }
+    }
+  }
+}

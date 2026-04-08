@@ -1,0 +1,252 @@
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-13-	deletePodFunc func(ctx context.Context, name string) error
+internal/service/devmachine/service_test.go:14:	getPodFunc    func(ctx context.Context, name string) (*k8s.PodInfo, error)
+internal/service/devmachine/service_test.go:15:	listPodsFunc  func(ctx context.Context, labels map[string]string) ([]k8s.PodInfo, error)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-16-	getPodLogsFunc func(ctx context.Context, name string, tailLines int64) (string, error)
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-32-
+internal/service/devmachine/service_test.go:33:func (m *mockK8sClient) GetPod(ctx context.Context, name string) (*k8s.PodInfo, error) {
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-34-	if m.getPodFunc != nil {
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-36-	}
+internal/service/devmachine/service_test.go:37:	return &k8s.PodInfo{Name: name, Status: "Running"}, nil
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-38-}
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-39-
+internal/service/devmachine/service_test.go:40:func (m *mockK8sClient) ListPods(ctx context.Context, labels map[string]string) ([]k8s.PodInfo, error) {
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-41-	if m.listPodsFunc != nil {
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-43-	}
+internal/service/devmachine/service_test.go:44:	return []k8s.PodInfo{{Name: "pod1", Status: "Running"}}, nil
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service_test.go-45-}
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/client.go-111-
+pkg/external/k8s/client.go:112:func (c *client) GetPod(ctx context.Context, name string) (*PodInfo, error) {
+pkg/external/k8s/client.go-113-	pod, err := c.clientset.CoreV1().Pods(c.namespace).Get(ctx, name, metav1.GetOptions{})
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/client.go-122-
+pkg/external/k8s/client.go:123:	return &PodInfo{
+pkg/external/k8s/client.go-124-		Name:      pod.Name,
+pkg/external/k8s/client.go:125:		Status:    string(pod.Status.Phase),
+pkg/external/k8s/client.go-126-		Image:     image,
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/client.go-131-
+pkg/external/k8s/client.go:132:func (c *client) ListPods(ctx context.Context, labelMap map[string]string) ([]PodInfo, error) {
+pkg/external/k8s/client.go-133-	selector := labels.SelectorFromSet(labelMap)
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/client.go-140-
+pkg/external/k8s/client.go:141:	var podInfos []PodInfo
+pkg/external/k8s/client.go-142-	for _, pod := range pods.Items {
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/client.go-147-
+pkg/external/k8s/client.go:148:		podInfos = append(podInfos, PodInfo{
+pkg/external/k8s/client.go-149-			Name:      pod.Name,
+pkg/external/k8s/client.go:150:			Status:    string(pod.Status.Phase),
+pkg/external/k8s/client.go-151-			Image:     image,
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service.go-13-	DeletePod(ctx context.Context, name string) error
+internal/service/devmachine/service.go:14:	GetPod(ctx context.Context, name string) (*k8s.PodInfo, error)
+internal/service/devmachine/service.go:15:	ListPods(ctx context.Context, labels map[string]string) ([]k8s.PodInfo, error)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service.go-16-	GetPodLogs(ctx context.Context, name string, tailLines int64) (string, error)
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service.go-46-
+internal/service/devmachine/service.go:47:func (s *service) GetPod(ctx context.Context, name string) (*k8s.PodInfo, error) {
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service.go-48-	if name == "" {
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service.go-53-
+internal/service/devmachine/service.go:54:func (s *service) ListPods(ctx context.Context, labels map[string]string) ([]k8s.PodInfo, error) {
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/service/devmachine/service.go-55-	return s.k8sClient.ListPods(ctx, labels)
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-58-
+pkg/external/harbor/client.go:59:	if resp.StatusCode != http.StatusOK {
+pkg/external/harbor/client.go:60:		return nil, fmt.Errorf("harbor API error: %d", resp.StatusCode)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-61-	}
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-78-
+pkg/external/harbor/client.go:79:	if resp.StatusCode != http.StatusOK {
+pkg/external/harbor/client.go:80:		return nil, fmt.Errorf("harbor API error: %d", resp.StatusCode)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-81-	}
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-98-
+pkg/external/harbor/client.go:99:	if resp.StatusCode != http.StatusOK {
+pkg/external/harbor/client.go:100:		return nil, fmt.Errorf("harbor API error: %d", resp.StatusCode)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-101-	}
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-118-
+pkg/external/harbor/client.go:119:	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusAccepted {
+pkg/external/harbor/client.go:120:		return fmt.Errorf("harbor API error: %d", resp.StatusCode)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-121-	}
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-137-
+pkg/external/harbor/client.go:138:	if resp.StatusCode != http.StatusCreated {
+pkg/external/harbor/client.go:139:		return fmt.Errorf("harbor API error: %d", resp.StatusCode)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/harbor/client.go-140-	}
+--
+internal/handler/image/handler.go-28-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/image/handler.go:29:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-30-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-35-		h.logger.Error("failed to list repositories", zap.Error(err), zap.String("project", req.ProjectName))
+internal/handler/image/handler.go:36:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-37-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-39-
+internal/handler/image/handler.go:40:	c.JSON(http.StatusOK, imagemodel.ListRepositoriesResponse{Repositories: repos})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-41-}
+--
+internal/handler/image/handler.go-46-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/image/handler.go:47:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-48-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-53-		h.logger.Error("failed to get repository", zap.Error(err))
+internal/handler/image/handler.go:54:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-55-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-57-
+internal/handler/image/handler.go:58:	c.JSON(http.StatusOK, imagemodel.GetRepositoryResponse{Repository: *repo})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-59-}
+--
+internal/handler/image/handler.go-64-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/image/handler.go:65:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-66-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-71-		h.logger.Error("failed to list artifacts", zap.Error(err))
+internal/handler/image/handler.go:72:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-73-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-75-
+internal/handler/image/handler.go:76:	c.JSON(http.StatusOK, imagemodel.ListArtifactsResponse{Artifacts: artifacts})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-77-}
+--
+internal/handler/image/handler.go-82-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/image/handler.go:83:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-84-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-88-		h.logger.Error("failed to delete artifact", zap.Error(err))
+internal/handler/image/handler.go:89:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-90-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-92-
+internal/handler/image/handler.go:93:	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-94-}
+--
+internal/handler/image/handler.go-99-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/image/handler.go:100:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-101-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-105-		h.logger.Error("failed to tag artifact", zap.Error(err))
+internal/handler/image/handler.go:106:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-107-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-109-
+internal/handler/image/handler.go:110:	c.JSON(http.StatusOK, gin.H{"message": "tagged successfully"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/image/handler.go-111-}
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-28-	if key == "" {
+internal/handler/storage/handler.go:29:		c.JSON(http.StatusBadRequest, gin.H{"error": "key is required"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-30-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-34-	if err != nil {
+internal/handler/storage/handler.go:35:		c.JSON(http.StatusBadRequest, gin.H{"error": "file is required"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-36-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-40-	if err != nil {
+internal/handler/storage/handler.go:41:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-42-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-55-		h.logger.Error("failed to upload file", zap.Error(err), zap.String("key", key))
+internal/handler/storage/handler.go:56:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-57-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-59-
+internal/handler/storage/handler.go:60:	c.JSON(http.StatusOK, storagemodel.UploadResponse{
+internal/handler/storage/handler.go-61-		Key:  key,
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-69-	if key == "" {
+internal/handler/storage/handler.go:70:		c.JSON(http.StatusBadRequest, gin.H{"error": "key is required"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-71-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-76-		h.logger.Error("failed to download file", zap.Error(err), zap.String("key", key))
+internal/handler/storage/handler.go:77:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-78-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-81-
+internal/handler/storage/handler.go:82:	c.DataFromReader(http.StatusOK, -1, "application/octet-stream", reader, nil)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-83-}
+--
+internal/handler/storage/handler.go-88-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/storage/handler.go:89:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-90-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-94-		h.logger.Error("failed to delete file", zap.Error(err), zap.String("key", req.Key))
+internal/handler/storage/handler.go:95:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-96-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-98-
+internal/handler/storage/handler.go:99:	c.JSON(http.StatusOK, gin.H{"message": "deleted successfully"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-100-}
+--
+internal/handler/storage/handler.go-105-	if err := c.ShouldBindQuery(&req); err != nil {
+internal/handler/storage/handler.go:106:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-107-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-112-		h.logger.Error("failed to list files", zap.Error(err), zap.String("prefix", req.Prefix))
+internal/handler/storage/handler.go:113:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-114-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-116-
+internal/handler/storage/handler.go:117:	c.JSON(http.StatusOK, storagemodel.ListResponse{Keys: keys})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-118-}
+--
+internal/handler/storage/handler.go-123-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/storage/handler.go:124:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-125-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-130-		h.logger.Error("failed to check file existence", zap.Error(err), zap.String("key", req.Key))
+internal/handler/storage/handler.go:131:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-132-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-134-
+internal/handler/storage/handler.go:135:	c.JSON(http.StatusOK, storagemodel.ExistsResponse{Exists: exists})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/storage/handler.go-136-}
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/interface.go-13-	// GetPod 获取 Pod 信息
+pkg/external/k8s/interface.go:14:	GetPod(ctx context.Context, name string) (*PodInfo, error)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/interface.go-15-	// ListPods 列出 Pod
+pkg/external/k8s/interface.go:16:	ListPods(ctx context.Context, labels map[string]string) ([]PodInfo, error)
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/interface.go-17-	// GetPodLogs 获取 Pod 日志
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/interface.go-37-
+pkg/external/k8s/interface.go:38:type PodInfo struct {
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/pkg/external/k8s/interface.go-39-	Name      string
+--
+internal/handler/devmachine/handler.go-29-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/devmachine/handler.go:30:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-31-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-53-		h.logger.Error("failed to create pod", zap.Error(err), zap.String("name", req.Name))
+internal/handler/devmachine/handler.go:54:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-55-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-57-
+internal/handler/devmachine/handler.go:58:	c.JSON(http.StatusOK, devmachinemodel.CreatePodResponse{Message: "pod created successfully"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-59-}
+--
+internal/handler/devmachine/handler.go-64-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/devmachine/handler.go:65:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-66-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-70-		h.logger.Error("failed to delete pod", zap.Error(err), zap.String("name", req.Name))
+internal/handler/devmachine/handler.go:71:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-72-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-74-
+internal/handler/devmachine/handler.go:75:	c.JSON(http.StatusOK, gin.H{"message": "pod deleted successfully"})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-76-}
+--
+internal/handler/devmachine/handler.go-81-	if err := c.ShouldBindJSON(&req); err != nil {
+internal/handler/devmachine/handler.go:82:		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-83-		return
+--
+/Users/xuwentao/Projects/tele/tap-edu-backend/.claude/worktrees/agitated-volhard/internal/handler/devmachine/handler.go-88-		h.logger.Error("failed to get pod", zap.Error(err), zap.String("name", req.Name))
+internal/handler/devmachine/handler.go:89:		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
+[Showing results with pagination = limit: 250]

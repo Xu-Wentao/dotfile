@@ -1,0 +1,51 @@
+package enum
+
+import (
+	commonmodel "code.srdcloud.cn/TDP-PaaS/tap/tap-edu-backend/internal/model/common"
+	devmachines "code.srdcloud.cn/TDP-PaaS/tap/tap-edu-backend/internal/model/devmachine"
+	"code.srdcloud.cn/TDP-PaaS/tap/tap-edu-backend/pkg/util"
+
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+)
+
+type Handler struct {
+	EnumRegistry *util.EnumRegistry
+	logger       *zap.Logger
+}
+
+func NewHandler(logger *zap.Logger) *Handler {
+	return &Handler{
+		logger: logger,
+	}
+}
+
+// InitEnumRegistry 初始化枚举注册表
+func (h *Handler) InitEnumRegistry() {
+	h.EnumRegistry = util.NewEnumRegistry()
+	// 注册所有枚举类型
+	// 开发机
+	h.EnumRegistry.Register("devMachineStatus", &devmachines.StatusEnumProvider{})
+}
+
+func (h *Handler) Enum(c *gin.Context) {
+	enumType := c.Query("type")
+
+	if enumType == "" {
+		// 返回所有可用的枚举类型
+		response := map[string]interface{}{
+			"available_types": h.EnumRegistry.GetAvailableTypes(),
+			"usage":           "Use ?type=<enum_type> to get specific enum values",
+		}
+		commonmodel.RespondSuccess(c, response)
+		return
+	}
+
+	enumData, err := h.EnumRegistry.GetEnum(enumType)
+	if err != nil {
+		commonmodel.RespondInternalError(c, err.Error())
+		return
+	}
+
+	commonmodel.RespondSuccess(c, enumData)
+}

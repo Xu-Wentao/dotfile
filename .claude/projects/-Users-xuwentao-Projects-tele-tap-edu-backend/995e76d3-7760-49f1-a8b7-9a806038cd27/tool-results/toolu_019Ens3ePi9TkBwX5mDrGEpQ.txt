@@ -1,0 +1,252 @@
+internal/handler/volcano/handler.go:25:// @Summary      创建 VolcanoQueue
+internal/handler/volcano/handler.go:26:// @Description  在 Kubernetes 中创建 VolcanoQueue
+internal/handler/volcano/handler.go:29:// @Produce      json
+internal/handler/volcano/handler.go:31:// @Param        request body volcanomodel.CreateQueueRequest true "创建队列请求"
+internal/handler/volcano/handler.go:32:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/volcano/handler.go:53:// @Summary      更新 VolcanoQueue
+internal/handler/volcano/handler.go:54:// @Description  更新 VolcanoQueue 的配置
+internal/handler/volcano/handler.go:57:// @Produce      json
+internal/handler/volcano/handler.go:59:// @Param        request body volcanomodel.UpdateQueueRequest true "更新队列请求"
+internal/handler/volcano/handler.go:60:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/volcano/handler.go:82:// @Summary      删除 VolcanoQueue
+internal/handler/volcano/handler.go:83:// @Description  从 Kubernetes 中删除 VolcanoQueue
+internal/handler/volcano/handler.go:86:// @Produce      json
+internal/handler/volcano/handler.go:88:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/volcano/handler.go:109:// @Summary      获取 VolcanoQueue 信息
+internal/handler/volcano/handler.go:110:// @Description  获取 VolcanoQueue 的详细信息
+internal/handler/volcano/handler.go:113:// @Produce      json
+internal/handler/volcano/handler.go:115:// @Success      200  {object}  commonmodel.BaseResponse{respBody=volcanomodel.GetQueueResponse}
+internal/handler/volcano/handler.go:136:// @Summary      列出 VolcanoQueue
+internal/handler/volcano/handler.go:137:// @Description  列出所有 VolcanoQueue
+internal/handler/volcano/handler.go:140:// @Produce      json
+internal/handler/volcano/handler.go:142:// @Success      200  {object}  commonmodel.BaseResponse{respBody=volcanomodel.ListQueuesResponse}
+internal/handler/volcano/handler.go:158:// @Summary      获取集群资源信息
+internal/handler/volcano/handler.go:159:// @Description  获取集群总资源、已分配资源和剩余可用资源
+internal/handler/volcano/handler.go:162:// @Produce      json
+internal/handler/volcano/handler.go:164:// @Success      200  {object}  commonmodel.BaseResponse{respBody=volcanomodel.GetClusterResourceResponse}
+internal/handler/image/handler.go:28:// @Summary      创建项目
+internal/handler/image/handler.go:29:// @Description  在 Harbor 中创建一个新的项目（Project）
+internal/handler/image/handler.go:32:// @Produce      json
+internal/handler/image/handler.go:34:// @Param        request body imodel.BaseProjectReq true "创建项目请求"
+internal/handler/image/handler.go:35:// @Success      200  {object}  cmodel.BaseResponse{respBody=string} "创建成功，返回项目名"
+internal/handler/image/handler.go:58:// @Summary      列出项目
+internal/handler/image/handler.go:59:// @Description  列出所有 Harbor 项目
+internal/handler/image/handler.go:61:// @Produce      json
+internal/handler/image/handler.go:63:// @Param        projectName query string false "项目名称（过滤）"
+internal/handler/image/handler.go:64:// @Success      200  {object}  cmodel.BaseResponse{respBody=imodel.ListProjectResp}
+internal/handler/image/handler.go:81:// @Summary      列出项目下的所有镜像
+internal/handler/image/handler.go:82:// @Description  列出指定项目下的所有镜像列表
+internal/handler/image/handler.go:84:// @Produce      json
+internal/handler/image/handler.go:86:// @Param        project path string true "项目名称"
+internal/handler/image/handler.go:87:// @Success      200  {object}  cmodel.BaseResponse{respBody=imodel.ListImagesResp} "镜像列表"
+internal/handler/image/handler.go:108:// @Summary      获取镜像详情
+internal/handler/image/handler.go:109:// @Description  获取指定项目下某个镜像的详细信息
+internal/handler/image/handler.go:111:// @Produce      json
+internal/handler/image/handler.go:113:// @Param        project path string true "项目名称"
+internal/handler/image/handler.go:114:// @Param        image   path string true "镜像名称"
+internal/handler/image/handler.go:115:// @Success      200  {object}  cmodel.BaseResponse{respBody=imodel.ImageDetailResp} "镜像详情"
+internal/handler/image/handler.go:136:// @Summary      删除镜像
+internal/handler/image/handler.go:137:// @Description  删除指定项目下的镜像仓库
+internal/handler/image/handler.go:139:// @Produce      json
+internal/handler/image/handler.go:141:// @Param        project path string true "项目名称"
+internal/handler/image/handler.go:142:// @Param        image   path string true "镜像名称"
+internal/handler/image/handler.go:143:// @Success      200  {object}  cmodel.BaseResponse "删除成功"
+internal/handler/image/handler.go:164:// @Summary      删除镜像 Tag
+internal/handler/image/handler.go:165:// @Description  删除指定镜像仓库下的某个 Tag
+internal/handler/image/handler.go:167:// @Produce      json
+internal/handler/image/handler.go:169:// @Param        project path string true "项目名称"
+internal/handler/image/handler.go:170:// @Param        image   path string true "镜像名称"
+internal/handler/image/handler.go:171:// @Param        tag     path string true "Tag 名称"
+internal/handler/image/handler.go:172:// @Success      200  {object}  cmodel.BaseResponse "删除成功"
+internal/handler/image/handler.go:192:// @Summary      发布镜像
+internal/handler/image/handler.go:193:// @Description  发布指定镜像 Tag（触发发布/复制流程）
+internal/handler/image/handler.go:195:// @Produce      json
+internal/handler/image/handler.go:197:// @Param        request body imodel.PublishImageReq true "发布镜像请求"
+internal/handler/image/handler.go:198:// @Success      200  {object}  cmodel.BaseResponse "发布成功"
+internal/handler/image/handler.go:219:// @Summary      撤回镜像发布
+internal/handler/image/handler.go:220:// @Description  撤回已发布的镜像（删除 public tag + 移除平台发布 label）
+internal/handler/image/handler.go:222:// @Produce      json
+internal/handler/image/handler.go:224:// @Param        request body imodel.UnPublishImageReq true "撤回发布请求"
+internal/handler/image/handler.go:225:// @Success      200  {object}  cmodel.BaseResponse "撤回成功"
+internal/handler/image/handler.go:246:// @Summary      上传镜像
+internal/handler/image/handler.go:247:// @Description  上传一个或多个镜像文件到指定项目，支持通过 multipart/form-data 方式上传镜像文件，当前接口为预留实现
+internal/handler/image/handler.go:250:// @Produce      json
+internal/handler/image/handler.go:252:// @Param        project        formData  string  true  "项目名称"
+internal/handler/image/handler.go:253:// @Param        image          formData  string  true  "镜像名称（不含 tag）"
+internal/handler/image/handler.go:254:// @Param        tag            formData  string  true  "镜像tag"
+internal/handler/image/handler.go:255:// @Param        imageFiles     formData  file    true  "镜像文件（可上传多个）"
+internal/handler/image/handler.go:256:// @Success      200  {object}  cmodel.BaseResponse  "操作成功"
+internal/handler/image/handler.go:288:// @Summary      获取镜像拉取命令
+internal/handler/image/handler.go:289:// @Description  根据项目名称、镜像名称和 tag 生成镜像拉取命令（如 docker / nerdctl / ctr pull），用于节点或用户侧拉取镜像
+internal/handler/image/handler.go:292:// @Produce      json
+internal/handler/image/handler.go:294:// @Param        project  path     string  true  "项目名称"
+internal/handler/image/handler.go:295:// @Param        image    path     string  true  "镜像名称（不含 tag）"
+internal/handler/image/handler.go:296:// @Param        tag      path     string  true  "镜像标签"
+internal/handler/image/handler.go:297:// @Success      200      {object} cmodel.BaseResponse{data=string} "获取成功，返回拉取命令"
+internal/handler/auth/handler.go:27:// @Summary      用户登录
+internal/handler/auth/handler.go:28:// @Description  用户登录接口，返回 JWT Token
+internal/handler/auth/handler.go:31:// @Produce      json
+internal/handler/auth/handler.go:32:// @Param        request body authmodel.LoginRequest true "登录请求"
+internal/handler/auth/handler.go:33:// @Success      200  {object}  commonmodel.BaseResponse{respBody=authmodel.LoginResponse}
+internal/handler/auth/handler.go:67:// @Summary      生成临时token
+internal/handler/auth/handler.go:68:// @Description  生成临时文件访问token
+internal/handler/auth/handler.go:71:// @Produce      json
+internal/handler/auth/handler.go:72:// @Param        request body authmodel.GenerateTempTokenRequest true "生成token请求"
+internal/handler/auth/handler.go:73:// @Success      200  {object}  authmodel.GenerateTempTokenResponse
+internal/handler/auth/handler.go:142:// @Summary      删除临时token
+internal/handler/auth/handler.go:143:// @Description  删除/作废已生成的临时token
+internal/handler/auth/handler.go:146:// @Produce      json
+internal/handler/auth/handler.go:147:// @Param        request body authmodel.RevokeTempTokenRequest true "删除token请求"
+internal/handler/auth/handler.go:148:// @Success      200  {object}  commonmodel.BaseResponse{data=authmodel.RevokeTempTokenResponse}
+internal/handler/status/handler.go:24:// @Summary      获取服务状态
+internal/handler/status/handler.go:25:// @Description  获取指定外部服务的健康状态
+internal/handler/status/handler.go:27:// @Produce      json
+internal/handler/status/handler.go:29:// @Param        name path string true "服务名称 (s3, harbor, k8s, tdsc)"
+internal/handler/status/handler.go:30:// @Success      200  {object}  statusmanager.ServiceInfo
+internal/handler/status/handler.go:46:// @Summary      获取所有服务状态
+internal/handler/status/handler.go:47:// @Description  获取所有外部服务的健康状态
+internal/handler/status/handler.go:49:// @Produce      json
+internal/handler/status/handler.go:50:// @Success      200  {object}  map[string]statusmanager.ServiceInfo "所有服务状态信息"
+internal/handler/status/handler.go:58:// @Summary      检查服务健康状态
+internal/handler/status/handler.go:59:// @Description  手动触发指定服务的健康检查
+internal/handler/status/handler.go:61:// @Produce      json
+internal/handler/status/handler.go:63:// @Param        name path string true "服务名称 (s3, harbor, k8s, tdsc)"
+internal/handler/status/handler.go:64:// @Success      200  {object}  statusmanager.ServiceInfo
+internal/handler/resource/handler.go:26:// @Summary      获取支持的GPU类型列表
+internal/handler/resource/handler.go:27:// @Description  获取集群支持的所有算力卡类型及其描述
+internal/handler/resource/handler.go:29:// @Produce      json
+internal/handler/resource/handler.go:30:// @Success      200  {object}  commonmodel.BaseResponse{respBody=[]resourcemodel.GPUTypeResponse} "GPU类型列表"
+internal/handler/storage/handler.go:61:// @Summary      上传文件
+internal/handler/storage/handler.go:62:// @Description  上传文件到存储服务
+internal/handler/storage/handler.go:65:// @Produce      json
+internal/handler/storage/handler.go:67:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:68:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:69:// @Param        key formData string true "文件键名（存储路径）"
+internal/handler/storage/handler.go:70:// @Param        file formData file true "要上传的文件"
+internal/handler/storage/handler.go:71:// @Param        contentType formData string false "文件内容类型"
+internal/handler/storage/handler.go:72:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.UploadResponse}
+internal/handler/storage/handler.go:124:// @Summary      下载文件
+internal/handler/storage/handler.go:125:// @Description  从存储服务下载文件
+internal/handler/storage/handler.go:127:// @Produce      application/octet-stream
+internal/handler/storage/handler.go:129:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:130:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:131:// @Param        key query string true "文件键名"
+internal/handler/storage/handler.go:132:// @Success      200  {file}    binary
+internal/handler/storage/handler.go:162:// @Summary      删除文件
+internal/handler/storage/handler.go:163:// @Description  从存储服务删除文件
+internal/handler/storage/handler.go:166:// @Produce      json
+internal/handler/storage/handler.go:168:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:169:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:170:// @Param        request body storagemodel.DeleteRequest true "删除请求"
+internal/handler/storage/handler.go:171:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/storage/handler.go:193:// @Summary      列出文件
+internal/handler/storage/handler.go:194:// @Description  列出存储服务中的文件列表
+internal/handler/storage/handler.go:196:// @Produce      json
+internal/handler/storage/handler.go:198:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:199:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:200:// @Param        prefix query string false "文件路径前缀"
+internal/handler/storage/handler.go:201:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.ListResponse}
+internal/handler/storage/handler.go:224:// @Summary      创建文件夹
+internal/handler/storage/handler.go:225:// @Description  在存储服务中创建文件夹（通过创建占位文件实现）
+internal/handler/storage/handler.go:228:// @Produce      json
+internal/handler/storage/handler.go:230:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:231:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:232:// @Param        request body storagemodel.CreateFolderRequest true "创建文件夹请求"
+internal/handler/storage/handler.go:233:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.CreateFolderResponse}
+internal/handler/storage/handler.go:262:// @Summary      查询Bucket配额
+internal/handler/storage/handler.go:263:// @Description  查询Bucket的配额信息
+internal/handler/storage/handler.go:265:// @Produce      json
+internal/handler/storage/handler.go:267:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:268:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:269:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.GetBucketQuotaResponse}
+internal/handler/storage/handler.go:290:// @Summary      设置文件夹配额
+internal/handler/storage/handler.go:291:// @Description  设置文件夹的配额限制
+internal/handler/storage/handler.go:293:// @Produce      json
+internal/handler/storage/handler.go:295:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:296:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:297:// @Param        path body string true "文件夹路径"
+internal/handler/storage/handler.go:298:// @Param        cap body int64 true "容量限制（字节）"
+internal/handler/storage/handler.go:299:// @Param        num body int64 true "文件数量限制"
+internal/handler/storage/handler.go:300:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/storage/handler.go:325:// @Summary      查询文件夹配额
+internal/handler/storage/handler.go:326:// @Description  查询文件夹的配额信息
+internal/handler/storage/handler.go:328:// @Produce      json
+internal/handler/storage/handler.go:330:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:331:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:332:// @Param        path query string true "文件夹路径"
+internal/handler/storage/handler.go:333:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.GetFolderQuotaResponse}
+internal/handler/storage/handler.go:365:// @Summary      初始化分片上传
+internal/handler/storage/handler.go:366:// @Description  初始化大文件的分片上传
+internal/handler/storage/handler.go:369:// @Produce      json
+internal/handler/storage/handler.go:371:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:372:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:373:// @Param        request body storagemodel.InitMultipartUploadRequest true "初始化请求"
+internal/handler/storage/handler.go:374:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.InitMultipartUploadResponse}
+internal/handler/storage/handler.go:411:// @Summary      上传分片
+internal/handler/storage/handler.go:412:// @Description  上传文件的一个分片，使用 FormData 传递参数和文件内容
+internal/handler/storage/handler.go:415:// @Produce      json
+internal/handler/storage/handler.go:417:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:418:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:419:// @Param        key formData string true "文件键名（存储路径）"
+internal/handler/storage/handler.go:420:// @Param        uploadId formData string true "上传ID，由初始化分片上传接口返回"
+internal/handler/storage/handler.go:421:// @Param        partNumber formData int true "分片序号，从1开始"
+internal/handler/storage/handler.go:422:// @Param        file formData file true "分片文件内容"
+internal/handler/storage/handler.go:423:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.UploadPartResponse}
+internal/handler/storage/handler.go:477:// @Summary      完成分片上传
+internal/handler/storage/handler.go:478:// @Description  完成所有分片的上传并合并文件
+internal/handler/storage/handler.go:481:// @Produce      json
+internal/handler/storage/handler.go:483:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:484:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:485:// @Param        request body storagemodel.CompleteMultipartUploadRequest true "完成请求"
+internal/handler/storage/handler.go:486:// @Success      200  {object}  commonmodel.BaseResponse{respBody=storagemodel.CompleteMultipartUploadResponse}
+internal/handler/storage/handler.go:543:// @Summary      取消分片上传
+internal/handler/storage/handler.go:544:// @Description  取消正在进行的分片上传
+internal/handler/storage/handler.go:547:// @Produce      json
+internal/handler/storage/handler.go:549:// @Param        Authorization header string false "Bearer Token（JWT认证）"
+internal/handler/storage/handler.go:550:// @Param        X-Temp-Token header string false "临时Token（用于临时访问）"
+internal/handler/storage/handler.go:551:// @Param        request body storagemodel.AbortMultipartUploadRequest true "取消请求"
+internal/handler/storage/handler.go:552:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/devmachine/handler.go:28:// @Summary      创建 Pod
+internal/handler/devmachine/handler.go:29:// @Description  在 Kubernetes 中创建 Pod
+internal/handler/devmachine/handler.go:32:// @Produce      json
+internal/handler/devmachine/handler.go:34:// @Param        request body devmachinemodel.CreatePodRequest true "创建 Pod 请求"
+internal/handler/devmachine/handler.go:35:// @Success      200  {object}  devmachinemodel.CreatePodResponse
+internal/handler/devmachine/handler.go:74:// @Summary      删除 Pod
+internal/handler/devmachine/handler.go:75:// @Description  从 Kubernetes 中删除 Pod
+internal/handler/devmachine/handler.go:78:// @Produce      json
+internal/handler/devmachine/handler.go:80:// @Param        request body devmachinemodel.DeletePodRequest true "删除 Pod 请求"
+internal/handler/devmachine/handler.go:81:// @Success      200  {object}  map[string]string
+internal/handler/devmachine/handler.go:102:// @Summary      获取 Pod 信息
+internal/handler/devmachine/handler.go:103:// @Description  获取 Pod 的详细信息
+internal/handler/devmachine/handler.go:106:// @Produce      json
+internal/handler/devmachine/handler.go:108:// @Param        request body devmachinemodel.GetPodRequest true "获取 Pod 请求"
+internal/handler/devmachine/handler.go:109:// @Success      200  {object}  devmachinemodel.GetPodResponse
+internal/handler/devmachine/handler.go:131:// @Summary      列出 Pod
+internal/handler/devmachine/handler.go:132:// @Description  列出所有 Pod，支持按标签过滤
+internal/handler/devmachine/handler.go:135:// @Produce      json
+internal/handler/devmachine/handler.go:137:// @Param        request body devmachinemodel.ListPodsRequest true "列出 Pod 请求"
+internal/handler/devmachine/handler.go:138:// @Success      200  {object}  devmachinemodel.ListPodsResponse
+internal/handler/devmachine/handler.go:160:// @Summary      获取 Pod 日志
+internal/handler/devmachine/handler.go:161:// @Description  获取 Pod 的日志内容
+internal/handler/devmachine/handler.go:164:// @Produce      json
+internal/handler/devmachine/handler.go:166:// @Param        request body devmachinemodel.GetPodLogsRequest true "获取日志请求"
+internal/handler/devmachine/handler.go:167:// @Success      200  {object}  devmachinemodel.GetPodLogsResponse
+internal/handler/devmachine/handler.go:189:// @Summary      创建 Devmachine
+internal/handler/devmachine/handler.go:190:// @Description  在指定 namespace 中创建 Devmachine
+internal/handler/devmachine/handler.go:193:// @Produce      json
+internal/handler/devmachine/handler.go:195:// @Param        request body devmachinemodel.CreateDevmachineRequest true "创建 Devmachine 请求"
+internal/handler/devmachine/handler.go:196:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/devmachine/handler.go:217:// @Summary      删除 Devmachine
+internal/handler/devmachine/handler.go:218:// @Description  从指定 namespace 中删除 Devmachine
+internal/handler/devmachine/handler.go:221:// @Produce      json
+internal/handler/devmachine/handler.go:223:// @Param        namespace path string true "Namespace"
+internal/handler/devmachine/handler.go:224:// @Param        name path string true "Devmachine 名称"
+internal/handler/devmachine/handler.go:225:// @Success      200  {object}  commonmodel.BaseResponse
+internal/handler/devmachine/handler.go:242:// @Summary      更新 Devmachine
+internal/handler/devmachine/handler.go:243:// @Description  更新指定 namespace 中的 Devmachine
+internal/handler/devmachine/handler.go:246:// @Produce      json
+internal/handler/devmachine/handler.go:248:// @Param        namespace path string true "Namespace"
+internal/handler/devmachine/handler.go:249:// @Param        name path string true "Devmachine 名称"
+internal/handler/devmachine/handler.go:250:// @Param        request body devmachinemodel.UpdateDevmachineRequest true "更新 Devmachine 请求"
+
+[Showing results with pagination = limit: 250]

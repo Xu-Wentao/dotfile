@@ -1,0 +1,721 @@
+6ba04d3c [BUGFIX] 删除查询文件夹文件分页参数
+8a841e9c [BUGFIX] 删除查询文件夹文件分页参数
+0503d2b9 增加查看巡检结果接口
+a514823a feature: add karmada manager
+1fa6d42e feature: add display inspect result api
+06b10ea0 修复apiserver的启动参数配置错误
+4f7f1a89 修复apiserver的启动参数配置错误
+89ff61fa feature: add karmada manager
+936bd6c1 优化启动参数配置,通过configmap管理
+fb3e0dc9 优化启动参数配置,通过configmap管理
+b629c642 feat(node): node list add nodegroup attr
+ab62d224 feat(node): node list add nodegroup attr
+aea3f378 feature: add inference serving  manager
+457ae4b3 feature: add inference serving  manager
+81765e40 feat: 项目配额更新支持节点组逻辑
+c257835f feat: 项目配额更新支持节点组逻辑
+2737adf6 feat: 实现节点组管理接口
+ddcdad19 feat(node): support nodegroup
+cc6428f9 feat: 支持自定义分片上传的分片大小
+5822da63 feat: 支持自定义分片上传的分片大小
+59850a41 change pushImage history sort by time
+2ec336b2 change pushImage history sort by time
+40ad5bac chore: log params skip binary stream request body
+5593ccee chore: log params skip binary stream request body
+48deae20 add update imagePush api archCount && check image file validate
+348d4fd9 add update imagePush api archCount && check image file validate
+d2c4132c fix push image repo password and add push status enum api
+a2038ee7 fix push image repo password and add push status enum api
+28dfbfc8 fix push image tag is not valid
+084aa566 fix push image tag is not valid
+0944a56e add function download of many inspectresults
+28e238a5 add function download of many inspectresults
+db43962b add inspect rerun api manager of right now
+4c2efffc add inspect rerun api manager of right now
+d154134a add inspect manage api and fix push-image bug
+b3f423b6 add inspect manage api and fix push-image bug
+ee19c1f1 fix(queue): queue task sorted by createtime
+d874e6f9 fix(queue): queue task sorted by createtime
+c0d2d732 fix: 修复集群unhealthy或存储系统异常时接口错误
+5c0681b7 fix: 修复集群unhealthy或存储系统异常时接口错误
+d8af8d64 fix(helm): 修复prometheus默认地址和Alertmanager的镜像配置
+bd5f7838 fix(helm): 修复prometheus默认地址和Alertmanager的镜像配置
+cfc354da fix(auth): 修复权限检查问题
+1998c688 fix(auth): 修复权限检查问题
+c54c7efa fix(helm): 修复prometheus的配置错误
+858c9cf5 fix(helm): 修复prometheus的配置错误
+9754eb11 fix(helm): 修复prometheus的配置错误
+431cbd7f fix(helm): 修复prometheus的配置错误
+73cd048b feat: 支持队列任务总览,支持根据任务状态过滤
+e13ec430 feat: 支持队列任务总览,支持根据任务状态过滤
+89f2bc67 fix: 修复读取文件路径的潜在漏洞
+37e4b83d fix: 修复读取文件路径的潜在漏洞
+96d6b273 fix: 修复告警规则可更新告警名称
+494cc4fe fix: 修复告警规则可更新告警名称
+52996494 添加普通用户项目权限校验
+b51e177e 添加普通用户项目权限校验
+b77b2f44 sort namespace list api by createTime
+5a3163d8 sort namespace list api by createTime
+fbd4eb2d fix: namespace list page problem
+f8736b81 fix: namespace list page problem
+1784b79d fix: service port name is not empty
+858a15b8 fix: service port name is not empty
+55c4e8f5 fix: correct task type assignment when deleting custom tasks
+01a73aba fix: correct task type assignment when deleting custom tasks
+c7b41e1c 修复队列任务列表分页错误
+d46a84c3 修复队列任务列表分页错误
+1ba6ecf8 修复查询用户裸金属列表接口参数错误
+1f7ecc72 修复查询用户裸金属列表接口参数错误
+c7514bf9 fix: anno and label update failed
+a4940e14 fix: anno and label update failed
+3fd18536 解决创建pvc中文标签bug
+959e90a4 fix: add pvc informer manager delete label
+7f219436 修复裸金属历史监控查询过滤条件错误
+6283f845 修复裸金属历史监控查询过滤条件错误
+231e64b6 修复审计日志msg过长无法保存
+3ad09634 修复审计日志msg过长无法保存
+87ce5d88 修复自定义任务list初始化size问题
+baf03e70 修复自定义任务list初始化size问题
+afe48819 修复查询裸金属列表req参数问题
+5b61e434 修复查询裸金属列表req参数问题
+465fc00a Merge branch 'sunyt1212' into 'dev'
+4895a076 secret fix update and sort
+ddcaaf27 add volcano enum key.
+7a06906a add volcano enum key.
+58cbad19 fix: empty workload cause update service error
+487c2283 fix: 修复自定义任务列表排序问题
+9412d9a1 fix: empty workload cause update service error
+fe90d99f delete same label enum key.
+fd55397e delete same label enum key.
+fb6f72ec fix: 修复监控大盘 裸金属和容器监控没有按权限过滤
+43fdd490 fix: 修复自定义任务列表排序问题
+15babc50 修复队列任务查询失败
+9e367923 add label enum key 'paasDeploymentKubernetesIoRevision''.
+263b275b add label enum key 'paasDeploymentKubernetesIoRevision''.
+a7b62457 bugfix: alert history add age to now sub start time if end time is null.
+f00a69a0 bugfix: alert history add age to now sub start time if end time is null.
+151e4cef add label enum key.
+6e4f86f8 add label enum key.
+b8cd564e add system label define
+ed92eb26 add system label define
+0f93de2a fix: 修复监控大盘 裸金属和容器监控没有按权限过滤
+8a61413d fix: 修复队列任务类型过滤未生效
+100e6b0c fix: 修复队列任务类型过滤未生效
+a518183a func isSystemKey add three key.
+d6a2917e bugfix: get workload namespace is not empty
+756cb991 bugfix: get workload namespace is not empty
+4e11fe0f func isSystemKey add three key.
+906f5b9b 调整开发机.自定义任务.在线服务的业务名称label
+0a17b7ca 调整开发机.自定义任务.在线服务的业务名称label
+1a9ca8b0 delete anno 'origin-deployment.tap.ai.com/name'.
+9661f76d delete anno 'origin-deployment.tap.ai.com/name'.
+70ae9700 fix: 修复告警大盘没有按角色过滤数据,优化查询罗层
+27c23c0e fix: 修复告警大盘没有按角色过滤数据,优化查询罗层
+0f1957de bugfix: add prefix tap to system labels
+e5a6f0fd bugfix: add prefix tap to system labels
+10b34bda chore: 监控大盘实时数据计算npu卡数量
+2e22e632 chore: 监控大盘实时数据计算npu卡数量
+aaea9ee8 chore: 修改队列任务接口获取详情逻辑
+da1cdf9d chore: 修改队列任务接口获取详情逻辑
+bd4f03f9 add storage pvc name.
+0ad7f56e add storage pvc name.
+66a4bdba bugfix: alert history
+7c37a667 bugfix: alert history
+6e77a3ce fix: optimize command for customjob
+5cf6d780 fix: fix update prometheusrule failed
+a36ad844 fix: fix update prometheusrule failed
+9cf7eba2 feat: add customjob labels enum
+9c1f460b fix: optimize command for customjob
+ed644a43 bugfix of deployment annotation.
+4e3eb4c0 bugfix: add service annotation username by statefulSet create
+69b04e96 bugfix of deployment annotation.
+ec9cc8ef bugfix: add service annotation username by statefulSet create
+87def841 bugfix of onlineservice command.
+3c94f6ff exist same subPath pvc then skip create when create pvc
+9f53aa60 bugfix of onlineservice command.
+db99572e exist same subPath pvc then skip create when create pvc
+fe35483a Clean pv and pvc when delete statefulSet resource
+0d584067 Clean pv and pvc when delete statefulSet resource
+eb59a4e2 bugfix of onlineservice storage.
+dc763d5c bugfix of onlineservice storage.
+1fcd183c Add a parameter to specify the image used by the job that pushes images
+d35622e9 Add a parameter to specify the image used by the job that pushes images
+3f89dbbc Merge branch 'sunyt1212' into 'dev'
+5e8fa07a fix online_service.go,finished secret
+24b46732 fix: 修复节点类告警规则创建失败
+8d46a475 add NotReady status when list node
+42019aa0 add NotReady status when list node
+96532356 fix: 修复节点类告警规则创建失败
+60acf3c3 list api response add clusterName
+2ac21d26 fix: 修复创建集群/节点/自定义告警规则会设置上租户和项目id的问题
+d8ef9275 list api response add clusterName
+68863748 fix: resolve issues with task order, status display, port names, and list sorting
+72b0c3ad add service update manager api
+0ae6b9d7 fix: 修复创建集群/节点/自定义告警规则会设置上租户和项目id的问题
+24b05b1c add service update manager api
+df44e8dc 增加告警规则审计点
+38cbb4a2 增加告警规则审计点
+a96c765e bugfix of onlineservice.
+9f4c7ff2 bugfix of onlineservice.
+c67256e0 bugfix of deployment status.
+3bd2c4f0 feat: 添加告警规则列表查询的权限过滤
+3c703b9c bugfix of deployment status.
+ffe0a703 feat: 添加告警规则列表查询的权限过滤
+ef422608 fix: fix get alert object nodes list failed
+98087a24 support workload is empty when create svc
+60da424d bugfix of pvc list interface time develop.
+0668c07d bugfix of pvc list interface time develop.
+9f0af8d4 support workload is empty when create svc
+5582a16e fix: resolve issues with task order, status display, port names, and list sorting
+4cb021a8 fix: fix get alert object nodes list failed
+f9dbbe93 bugfix of pvc capacity param not give.
+6262ffba bugfix of pvc capacity param not give.
+0ea5f0be delete svc change request struct type
+805bbcd5 delete svc change request struct type
+9b9d3de7 bugfix of time list.
+2601adf5 bugfix of time list.
+53e7e292 fix: 修复会保存信息不全的存储池
+919ce2c2 fix: 修复会保存信息不全的存储池
+3f9b1ace add service manager api, include list/create/delete
+6624b94d add service manager api, include list/create/delete
+07d7e2e9 bugfix： clean headless service when delete sts
+eac71ca3 bugfix： clean headless service when delete sts
+0e53b7f1 fix: 修复告警规则模板格式,修复告警规则查询名称失败
+8ce34192 fix: 修复告警规则模板格式,修复告警规则查询名称失败
+d56f5df1 bugfix: project label remove project name key
+299a9aa6 bugfix: project label remove project name key
+2a5bd1db bugfix of register.
+204fe792 bugfix of register.
+0023bcc3 负载时间倒序排序、模糊查询
+c4a21c6d 负载时间倒序排序、模糊查询
+581df0da add label anno to get interface.
+596e54d2 bugfix of delete pvc add param force.
+9d39c710 add label anno to get interface.
+3ae9835d bugfix: 更新接口forbidden问题修复
+65575dd2 bugfix: 更新接口forbidden问题修复
+201d521b add interface of list ingress service port relation.
+1db39f70 add interface of list ingress service port relation.
+921331bc bugfix of get deployment storage.
+b7180ecb bugfix of get deployment storage.
+3aa6e372 fix: list alert rule enabled is null
+81f24745 fix: list alert rule enabled is null
+5dd02412 增加查询告警对象类型接口
+ccd49f7e bugfix of storageclass name is tdsc-sc.
+5ecc72c2 bugfix of storageclass name is tdsc-sc.
+fe1ce475 增加查询告警对象类型接口
+a80720dd bugfix of deployment resource memory show.
+fe58ab26 bugfix of deployment resource memory show.
+8ae32ade 有状态负载不挂载盘则注解为空，调整状态显示
+91d8a33b 有状态负载不挂载盘则注解为空，调整状态显示
+c51b06df 修复告警规则查询条件不生效
+72e51014 修复告警规则查询条件不生效
+5e278d84 bugfix of delete pv pvc.
+7d360437 bugfix of delete pv pvc.
+fbc2fe9e add audit log & bugfix of configmap update interface.
+0d2cd11b add audit log & bugfix of configmap update interface.
+f04e53b5 bugfix: 调整审计日志key值
+ee154eef bugfix: 调整审计日志key值
+b8d3f82d bugfix: 解决pod里多个挂载卷冲突问题
+bc4a46a4 bugfix: 解决pod里多个挂载卷冲突问题
+4f3a398d 修复新建和更新告警规则字段判断错误
+2ba884a7 修复新建和更新告警规则字段判断错误
+b4b17398 有状态负载command传参调整
+e9639181 有状态负载command传参调整
+ce353c80 bugfix of online service storage capacity setting.
+4f04b6e7 bugfix of online service storage capacity setting.
+949e91a8 bugfix of pv pvc delete by DeletePropagationBackground.
+f1b30753 bugfix of pv pvc delete by DeletePropagationBackground.
+caab50c7 bugfix: 查看工作负载返回镜像仓库id,增加默认单位
+76b3f1d5 查看工作负载返回镜像仓库id,增加默认单位
+db8cb049 有状态负载查看详情优化
+c8788b12 bugfix of pv pvc select by project id.
+09b28a29 bugfix of pv pvc select by project id.
+b344b4bb 有状态负载资源展示
+ab7a9b17 bugfix of username anno and filename check.
+c6d258b7 fix: 修复删除定义任务数据库id未正确传递问题
+55745a28 有状态负载资源展示
+920a4686 bugfix of username anno and filename check.
+727e94e5 fix: correct customjob database ID propagation in delete operation
+c9ea0086 创建项目队列和子队列都会添加租户项目信息
+943e4f43 创建项目队列和子队列都会添加租户项目信息
+281cf895 add IsValidDNS1123Subdomain to check dns1123 name.
+d235f48a add IsValidDNS1123Subdomain to check dns1123 name.
+c75f9dae delete deployment pv interface modify.
+d4064c44 bugfix: update project ComputingQuota check queue is empty
+0d0522c4 fix: 修复容器名称重复获取配置出错问题及去掉无用默认环境变量、增加acjob状态枚举
+deb8d287 fix: resolve duplicate container names and optimize config
+402cabf7 bugfix: list alert history
+bdcc0d8d delete deployment interface can delete pvc and pv.
+197409ad 优化namespace管理
+01fbcf81 delete deployment interface can delete pvc and pv.
+218d5e44 bugfix: update project ComputingQuota check queue is empty
+5341ce82 优化namespace管理
+70c9b228 修改计算时长的函数为formatAge
+e50509a7 修改计算时长的函数为formatAge
+0cf427c1 修复pod容器组的状态错误
+64aa156c 修复pod容器组的状态错误
+da86bcb2 sort create time of resource list interface.
+7d34c2a7 sort create time of resource list interface.
+c4b8d014 add clusterCode in deployment list interface.
+6870e9aa bugfix: 节点污点筛选、并发获取仓库信息
+26b9dbfe bugfix: 节点污点筛选、并发获取仓库信息
+ca8a8565 add baremetal history monitoring
+f8f2c24d bugfix of create resource cannot get clusterCode.
+d127a8da bugfix of create resource cannot get clusterCode.
+11365282 add log in create interface.
+1bff8d00 add log in create interface.
+60d6ba57 update configmap struct.
+f838bff2 update configmap struct.
+ca5c11ff add baremetal history monitoring
+13a651de add pvc/pv url register.
+bde34977 add pvc/pv url register.
+34ba6651 增加有状态工作负载管理接口
+47ecba7e add: 增加有状态工作负载管理接口
+eb38d690 feat: add dashbaord monitoring apis
+cc5a9b07 resource manage of ingress pv pvc deployment configmap.
+c2a725a8 resource manage of ingress pv pvc deployment configmap.
+47e07de3 feat: add dashbaord monitoring apis
+365c6c0c bugfix: 创建pvc检查是否存在
+93cf3b83 bugfix: 创建pvc检查是否存在
+e5205415 feat: add web terminal support for Pods
+cdec5200 feat: add web terminal support for Pods
+896c7bfc bugfix: list命名空间时增加集群检查，异常则跳过
+e5bed6af bugfix: list命名空间时增加集群检查，异常则跳过
+f2538e52 feat: add get customjob pods for ascendjob
+b4a17f17 feat: add get customjob pods for ascendjob
+e2ee0134 bugfix: 解决集群地域筛选不生效问题，增加集群健康字段
+f3898fac bugfix: 解决集群地域筛选不生效问题，增加集群健康字段
+f938d79b fix: 修复网盘配额已用比例未保留2位小数问题
+6e881b7e fix: 修复网盘配额已用比例未保留2位小数问题
+1ad2eb3a  fix:修复网盘配额结构体字段类型错误
+9d184365 fix:修复网盘配额结构体字段类型错误
+699688e9 feat: add support for AscendJob customjob type
+04a36c7e fix: 修改网盘存储配额字段,自动格式化单位
+27a41d27 feat: add support for AscendJob customjob type
+0a329bfb fix: 修改网盘存储配额字段,自动格式化单位
+a178a637 add: 集群健康检测、有状态工作负载
+5e0a6a37 add: 集群健康检测、有状态工作负载
+2988a852 节点： 污点管理、标签注解更新
+a984041e bugfix: update get alert history api
+8b17a5ef bugfix: update get alert history api
+d4f33c3b fix:修复查询监控指标模板错误
+dee5bda3 fix:修复查询监控指标模板错误
+a5545eee add: 节点管理接口
+20414821 fix: 修复读取kubeconfig配置失败的没有降级为incluster模式
+3832c81e fix: 修复读取kubeconfig配置失败的没有降级为incluster模式
+02cf3f85 feat: support alertrule mangae api
+0983fc81 feat: support alertrule mangae api
+e31a25ae add ring-controller atlas 910b lable for deployment
+35ed75b3 add ring-controller atlas 910b lable for deployment
+467608bd 节点管理功能
+f9baed8f add: 节点管理接口
+6f8d5f87 feat: enable customjobs support for Ascend 910B
+b1a4897d feat: enable businessservice support for Ascend 910B
+97998bcb 增加集群管理及命名空间管理接口
+0dd17e05 add: 增加集群管理及命名空间管理接口
+50fdec75 fix: 修复GPU类型空指针和开发机数据库同步等问题
+4420cd3e fix: 修复GPU类型空指针和开发机数据库同步等问题
+b6abd703 feat: add role spec to userinfo
+26ec3131 feat: add role spec to userinfo
+7fb8bbe5 fix: 修复队列是否为空默认值错误问题
+e8347b54 fix: 修复队列是否为空默认值错误问题
+9156a51e 增加告警规则模块数据结构和接口文档
+a278ce3f chore: add sync tenants cron job
+5897b502 chore: add sync tenants cron job
+06fb17cc refactor(enum): 统一状态枚举接口并移除重复实现
+743f768a refactor(enum): 统一状态枚举接口并移除重复实现
+b675e3a9 增加告警规则模块数据结构和接口文档
+2f621cc0 chore:调整业务服务模块代码结构
+fbfbeb18 chore:调整业务服务模块代码结构
+6bb01d85 更新支持审计的接口
+07959111 更新支持审计的接口
+13ab9457 fix: fix gpu config name error
+853ae6d0 fix: fix gpu config name error
+6a777440  调整审计日志接口字段
+2e1428e3 调整审计日志接口字段
+a8edfd05 feature: add get alert messages api
+98e8ed79 feature: 支持导出审计日志
+04885e86 feature: add get alert messages api
+bef6268b feature: 支持导出审计日志
+a1527269 refactor(devmachine): 优化开发机状态逻辑，去掉开机中状态
+f047cd35 refactor(devmachine): optimize dev machine status handling by removing StatusStarting state
+079ff650 feature: add audit module
+126b7d89 feature: add audit module
+4df6f86c bug fix of find online service diff while creating.
+9ec4f2d3 bug fix of find online service diff while creating.
+8284bd26 add 'IsEmpty' in list queue interface and bugfix of cannot create online service in different cluster by same name.
+c8efc277 add 'IsEmpty' in list queue interface and bugfix of cannot create online service in different cluster by same name.
+99bc3320 %TDP-PaaS-3266 fix: 处理开发机状态为空情况，优化状态返回值
+109ca210 fix(dev-machine): handle empty status value
+c5db93ae chore: set default metrics/gpu configuration
+7c1e579d bugfix of online service list interface(total compute is fault)
+b91efbf3 bugfix of online service list interface(total compute is fault)
+7c754f42 chore: set default metrics/gpu configuration
+27762ae6 lint code
+c44b7923 lint code
+ced209f0 %TDP-PaaS-3330 fix: 开发机、自定义任务增加创建人查询
+ded9e8ce fix: add creator search for business development
+1cfa5059 监控模板支持多个label配置；补充开发机和在线服务和自定义任务的监控指标
+86fa4288 监控模板支持多个label配置；补充开发机和在线服务和自定义任务的监控指标
+00f5c486 优化： 镜像大小友好显示
+4706f45e 优化： 镜像大小友好显示
+83343484 修复helm backend的gpu-resource文件挂载路径错误
+95439a1d 修复helm backend的gpu-resource文件挂载路径错误
+8fe180fe 支持配置文件配置backend适配的gpu资源
+38c71d95 feature: support config gpu resource
+b2b8a7f3 fix: 修改自定义任务错误状态码返回
+7f20c5f6 fix(customjob): correct error status code return values
+6e0d42bd bugfix of online service.
+66b3ec36 bugfix of online service.
+7bfd1948 容器资源管理: 集群管理、节点管理及通用标签注解修改接口调整
+0401158e 容器资源管理: 集群管理、节点管理及通用标签注解修改接口调整
+fbcd5d0e bugfix of online service event detail.
+e79e8586 bugfix of online service event detail.
+e00e61a9 fix(业务开发): 去掉业务开发状态字段,调整列表接口分页逻辑，统一创建时间，增加重名校验
+da5285c8 fix(business_development): remove business status from DB and unify list logic
+043031e8 bugfix of online service
+1e5265c6 bugfix of online service
+e17d5728 bugfix of online service
+9f13000f bugfix of online service
+c965ede4 fix:修复查询存储池剩余配额计算错误
+4c0a9bf7 增加业务开发模块详情返回值以及修复自定义任务列表分页传参
+1a324f62 bugfix of online service
+97647850 bugfix of online service
+1c5a0d3c feature: add alert message into db
+54430251 fix:修复查询存储池剩余配额计算错误
+209f025f add age and creator for business development detail and fix list customjobs
+46618e57 chore:删除多余的事务
+7fde31da chore:删除多余的事务
+fce92cfe feature: add alert message into db
+9db07c56 增加debug tokeninfo配置
+d0fd2aeb feat: add debug uid and username for tokeninfo
+cbdac357 chore: 网盘文件下载增加文件大小
+5c704d17 chore: add oauth log
+1c45342d chore: add oauth log
+8bbcc341 chore: 网盘文件下载增加文件大小
+47f4371e fix:修复网盘只能查询到一个存储池的Bug
+beaae311 fix:修复网盘只能查询到一个存储池的Bug
+7119eed4 支持批量删除文件夹和修复队列列表查询数据问题
+0f4c9051 bugfix of online service
+7920d332 bugfix of online service
+84b7c786 支持批量删除文件夹
+ee970ba1 bugfix: update project computing validate it has or not child queue
+373cd5cf bugfix: update project validate it has or not child queue
+4a82e2df bugfix of online service
+c806d946 bugfix of online service
+8b2de47d 修复自定义服务只能查看自己创建的问题
+d0b74625 chore: add stop register log
+6578c540 修复自定义服务只能查看自己创建的问题
+6905c3de chore: add stop register log
+ab47b1da 修改单元测试传参
+889abf7f fix(test): correct parameter in namespace_test
+2a48ff6e 队列的工作负载查询接口支持分页和根据任务类型过滤
+f957a31e 队列的工作负载查询接口支持分页和根据任务类型过滤
+371b939e bugfix: 还原namespace创建url；增加项目默认ns下的配置下载
+d90871b4 bugfix: 还原namespace创建url；增加项目默认ns下的配置下载
+c09765c2 网盘文件夹不显示大小
+4cbf5714 网盘文件夹不显示大小
+8449f51f 业务开发： 去掉gpu默认值
+f211fb96 优化dockerfile参数
+3512b8c7 优化dockerfile参数
+27ccd876 fix: drop gpu default 0
+d5f86bd2 fix:修复region多存储池或集群时查询问题
+9f5701a1 fix:修复region多存储池或集群时查询问题
+3e34b13c 优化网盘文件大小展示
+d7f04119 优化网盘文件大小展示
+399308ad 去掉重复代码，gpu模块抽离到util模块
+410fffa5 refactor: consolidate gpu  duplicate code into util modules
+76f9a3d1 修复集群列表显示；apiserver增加参数指定taptty地址
+d299c19f add: 集群管理页面，增加参数指定taptty地址
+86251324 调整dockerfile里golang版本
+2d6c2b07 调整dockerfile里golang版本
+1cadfde1 调整dockerfile里golang为研发云仓库镜像
+345b5b8a 调整dockerfile里golang为研发云仓库镜像
+8a12866c 修改Dockerfile和Makefile支持流水线双架构编译镜像
+0bd37465 修改Dockerfile和Makefile支持流水线双架构编译镜像
+dff00c16 bug fix of online service
+0f9c5af8 bug fix of online service
+89d5a4fd 适配研发云迁移
+0d5f58b7 适配研发云迁移
+9d238028 add: namespace and label/annotation resource manager api
+1ccb77a9 add: namespace and label/annotation  resource manager api
+4047b28f bug fix of online service
+d85672b0 bug fix of online service
+62eaab85 bugfix: add pprof paths
+28133b10 bugfix: add pprof paths
+8190b13c chore: Dockerfile增加时区
+496e89a4 fix: 修复开发机、自定义任务创建中文名称网盘失败
+f102045b 调整查询监控返回值label取值
+6502ce64 chore: Dockerfile增加时区
+d717f320 fix(business_development):  标准化PV/PVC命名并支持中文名称
+baf8258c feat: 优化 Prometheus 指标查询接口
+5b5fcd3f bug fix of list online service.
+2f456276 bug fix of list online service.
+5ff9a70b resource manager interface format.
+b130db45 resource manager interface format.
+23631b17 feat: 优化 Prometheus 指标查询接口
+6b13ea3d feat: add podlist for customjobs
+7a11413b feat: add podlist for customjobs
+56286b8c fix: 修复开发机指定队列注解
+efc431b4 bugfix: pv create failed cause pvc create nil pointer
+28a1cefe fix(dev-machines): move queue annotations to correct location
+e8441cc8 bugfix: pv create failed cause pvc create nil pointer
+e8956b6d status enum interface and bugfix.
+80dc6c6e status enum interface and bugfix.
+34b1932a bugfix
+d012d4fb bugfix: update project ComputingQuota
+2a0a9e30 增加自定义任务获取详情接口响应字段
+18e08f78 fix(customjob): add additional return fields to custom job details
+c6520d70  chore: log promql
+cffb97da chore: log promql
+3aaef230 支持业务服务查询监控指标
+fb1c203c 支持业务服务查询监控指标
+d6e65ab9 development of event list interface.
+07c8b916 development of event list interface.
+31072027 bugfix: apiserver add ingress-address param
+ad189b88 bugfix: apiserver add ingress-address param
+89aa9f80 支持gpu设置空值
+8827b0b6 fix(customjobs): allow GPU boundary value 0 to be passed
+93ccb60f bugfix: cluster computing quota base on volcano queue capability
+00e45bf0 bugfix: cluster computing quota base on volcano queue capability
+6d53c925 bugfix: cluster register use db cache to synchronize other backend pods
+ad8273bb 支持自定义任务中文命名，适配cpu,内存不带单位配置
+ba5aac52 fix: format name, cpu and memory paramater for custom jobs
+4e61ce50 bugfix: cluster register use db cache to synchronize other backend pods
+61025ed6 开发机支持中文名称，规范cpu,内存参数
+4086fb09 优化: 密文入库；go版本升级512 bit长度密钥失效，调整密钥为2048
+0bba9266 优化: 密文入库；go版本升级512 bit长度密钥失效，调整密钥为2048
+282ca807 format name, cpu and memory parameter for dev machines
+880777b0 feat: 根据地域查询项目内的网盘配额支持分页参数
+290ebb18 feat: 根据地域查询项目内的网盘配额支持分页参数
+6228d245 bugfix: 修复获取项目网盘列表时没有按地域筛选
+63c04b1a bugfix: 修复获取项目网盘列表时没有按地域筛选
+12037afa bugfix: 修复查询pod列表分页参数处理越界问题
+8cbf6c87 bugfix: 修复查询pod列表分页参数处理越界问题
+28bfded3 增加tdsc网盘适配
+1b4e3e8b add tdsc wed storage for business development
+c6ecb809 bugfix: 修复镜像列表查询分页及模糊查询
+2aad5839 feature: cluster register add resource lock
+75b83ec5 bugfix: 修复镜像列表查询分页及模糊查询
+59aeb6d9 feature: cluster register add resource lock
+4dc342be feature: remove nacos and use golang implement register
+5ccc79c5 feature: remove nacos and use golang implement register
+35e5691a bugfix of GetOnlineServiceName.
+a1dd811e bugfix of GetOnlineServiceName.
+08162081 bugfix of online_service name same as other background.
+69ce119d bugfix of online_service name same as other background.
+839b88bd bugfix: query pp-sscct
+3ccdb1ce bugfix: 修复集群注册时无法正常更新问题
+ff3cdaf8 bugfix: 修复集群注册时无法正常更新问题
+53c806fb bugfix: query ppsscct
+b9ed2a00 bugfix: 修复查询开发机列表current size参数错误
+d3f6bdeb bugfix: 修复查询开发机列表current size参数错误
+16bd340a bugfix: sync tenant must delete unless tenants
+713b34cd bugfix: tenant user list add tenant admin info
+86e8b367 调整开发机接口的请求，默认不查询用户自建开发机
+828f869c 调整开发机接口的请求，默认不查询用户自建开发机
+490e467d refactor: replace custom util.Filter with lo.Filter and add TDSC functionality
+7d0582d6 refactor: replace custom util.Filter with lo.Filter and add TDSC functionality
+9e2bee7b bugfix: sync tenant must delete useless tenants
+0d1697b1 bugfix: fix update repository password error && friendly display
+d63af5c7 fix:修复上传文件complete没有校验文件分片数问题
+99ed9d41 fix:修复上传文件complete没有校验文件分片数问题
+65de4db3 bugfix: fix update repository password error && friendly display
+47fa5b39 修改自定义任务前端返回值适配前端字符串展示并修改主机网络设置为任务级别
+0f894f90 bugfix of online_service list interface query param
+b23400d5 bugfix of online_service list interface query param
+1bae64a6 add hostNetwork for custom job tasks
+5e4f9a74 调整巡检模块响应字段
+2a739f4d bugfix: fix less 8 hour by time local
+7f5020a6 优化自定义任务获取接口返回值
+5b42c4df bugfix of online_service list data.
+161c9fce bugfix of online_service list data.
+525dfa9f bugfix of online_service deployment status.
+c53fa462 bugfix of online_service deployment status.
+68443a82 增加开发机状态更新，vscode访问
+8af2d4d6 bugfix of online_service.
+3c80a8f0 bugfix of online_service.
+b69e59f2 feature: add app version api
+f9cf90e2 add dev_machines vscode url and status
+6c3b2d33 bugfix of online_service.
+5464aee1 feature: add app version api
+e36180cf bugfix of online_service.
+4e5f9bf1 查询文件夹文件返回类型设置中文
+09a23e12 查询文件夹文件返回类型设置中文
+03ab7eb7 bugfix: storage quota add judgment
+5195fda2 bugfix: add storage quota judgment
+d571c5a2 bugfix: volcano queue path
+81bbc890 bugfix: volcano queue path
+339e58b7 bugfix of onlineservice.
+dc67b639 bugfix of onlineservice.
+6ca8d129 feature: add dev machine web terminal
+c1fa2b91 bugfix: suite_test add kubeconfig param
+efbe0491 feature: add dev machine web terminal
+33a5f5f3 增加枚举接口以及传参数优化
+b25cb43d feat(customjobs): refactor custom job request parameters and add plugin and protocol enum
+b378faa3 调整巡检模块响应字段
+8701de87 查看镜像推送历史页面增加响应字段与查询条件
+289d9cb4 优化: 查看镜像推送历史页面增加响应字段与查询条件
+21ebb61b 重构volcano相关接口调用
+80ecf57e bugfix: 前端友好，not found响应不报错
+2ad99b22 bugfix: 前端友好，not found响应不报错
+04cdc75d 增加单元测试kubeeye传参
+38b2383f fix: add unit tests for kubeeye parameters
+740a4cb2 增加自定义任务接口
+298f8f95 add imageConfig for busuness development and add custom jobs
+5a043cd7 增加巡检功能模块接口，巡检计划增删改查、巡检报告查看及下载
+3261d262 重构volcano相关接口调用
+46e720cc add：增加巡检功能模块接口
+ea059318 bugfix：config文件中user调整为字符串
+b227bf6c feat:新增查询项目队列详情接口
+e9e03087 feat:新增查询项目队列详情接口
+d8ead9c8 bugfix：config文件中user调整为字符串
+3364f5d2 bugfix: project manager
+0962c3e4 bugfix: project manager
+cadf3c55 feat:新增查询存储池详情接口
+ec2ecda7 feat:新增查询存储池详情接口
+d026f073 fix:修复创建和更新子队列的时候未进行参数校验
+e00bc4b5 fix:修复创建和更新子队列的时候未进行参数校验
+78d08ebf 优化：增加关联仓库模糊查询
+0dc59d6c feat:新增查询工作负载对应pod列表
+f1213e88 feat:新增查询工作负载对应pod列表
+173612cb 优化：增加关联仓库模糊查询
+8eed933f https://www.srdcloud.cn/code/33388/CodeMergeView/826056/mergeInfo
+edd78669 bugfix of port,resource display of online_service
+2d18f414 优化: 增加query参数，固定镜像项目名称
+d815d04d 修改队列接口返回码，修复上传文件数据解析问题
+ea2c7924 优化: 增加query参数，固定镜像项目名称
+4cda7a83 修改队列接口返回码，修复上传文件数据解析问题
+ed34c844 bugfix: project manager bug
+59c6c921 bugfix: like use %xxx%
+8b70f497 bugfix: project list get bug
+3e1d9b7b bugfix of resource name display.
+5dfb5eb2 bugfix of resource name display.
+c8245216 修复删除文件夹失败问题
+04325b53 优化: 镜像相应字段时间格式化；创建ns逻辑精简
+b6922583 修复删除文件夹失败问题
+18e68763 优化: 镜像相应字段时间格式化；创建ns逻辑精简
+725e278b 补充创建仓库 createAuthor 字段
+a9a0fcbb bugfix: project add quota manger with tdsc
+7bc14fa9 修复单元测试字段类型错误
+c1719bc5 修复单元测试字段类型错误
+e6280979 补充创建仓库 createAuthor 字段
+aed7a456 bugfix: project add quota manger with tdsc
+6e184545 调整镜像推送接口字段，后端进行查询
+527ddc1d 调整镜像推送接口字段，后端进行查询
+8c870237 bugfix: only platform admin can write tenant and project
+379f949b bugfix: only platform admin can write tenant and project
+9fb24cea bugfix of get online service detail.
+186bfbc5 bugfix of get online service detail.
+e7db42bd 增加根据region查询项目级存储配额接口，apiserver上报storageclassname
+e324b7d5 增加根据region查询项目级存储配额接口，apiserver上报storageclassname
+5683324d feature: add tenant project manager v2
+446422c5 feature: add tenant project manager v2
+750398f5 更新tdsc存储配额接口
+fdc76904 bugfix of imageConfig and resource and status of onlineService
+51fe2436 更新tdsc存储配额接口
+bdde4c84 bugfix of imageConfig and resource and status of onlineService
+369dfcb9 backend kubeConfig接口url去除tenantId字段
+5fe7893a backend kubeConfig接口url去除tenantId字段
+479d0f60 Merge branch 'xwt-dev' into 'dev'
+888d6408 更新队列接口文档，使用util函数格式化资源;更新helm增加apiserver参数
+7939a401 backend kubeConfig接口调整
+5e0a04db backend kubeConfig接口调整
+dba01f91 bugfix of memory
+6c798b60 bugfix of memory
+5a91a169 bugfix of rollback delete pv and pvc.
+e3be16c0 bugfix of rollback delete pv and pvc.
+29718d7c 优化镜像推送功能；增加查看image接口；调整kubeconfig为流式下载
+6fc6ab24 优化镜像推送功能；增加查看image接口；调整kubeconfig为流式下载
+d32c485e bugfix of online_service of apiserver rollback and should binding func error.
+5ab2eb3d bugfix of online_service of apiserver rollback and should binding func error.
+4d9a6528 bugfix of online_service. table of storage_onlineservice creating.
+300a9008 bugfix of online_service. table of storage_onlineservice creating.
+f0d2089b 修改路径参数name为id及修复单元测试
+86bdafbd fix(dev-machines): change path param 'name' to 'id' and fix unit tests
+25033a9b 仓库密码增加解密逻辑；抽离pv、pvc创建方法
+d930145d 仓库密码增加解密逻辑；抽离pv、pvc创建方法
+0b2b61fa feature: add project manager with oauth2
+c34d16e3 feature: add project manager with oauth2
+65759ff6 增加rsa公钥获取接口
+55f12ec4 增加rsa公钥获取接口
+61fef7c6 修改可提交任务子队列接口uri,修改region返回值
+631c31a5 修改可提交任务子队列接口uri,修改region返回值
+00530912 Merge branch 'feature/dev-machines' into 'dev'
+cc16dc77 feat(dev-machines): add dev-machines statusEnum
+532e5588 调整middleware结构;增加一个接口格式规范文档
+471933af Merge branch 'feature/dev-machines' into 'dev'
+38d7730b bugfix: add get user uid
+34a5b9bd bugfix: add get user uid
+653f2af2 feat: add dev-machines backend
+d91fe5f6 增加一个接口格式规范文档
+1b6d20fa 调整超时时间，解决apiserver超时backend无响应问题
+a5a294ce bugfix: 镜像返回结构调整；超时时间调整，解决apiserver超时backend无响应问题
+4a6ebbae 调整middleware结构
+855906ff 队列的工作负载列表支持根据任务类型过滤
+cf165db9 队列的工作负载列表支持根据任务类型过滤
+d1f31cce feature: add oauth2 manager
+f41e846b feature: add oauth2 manager
+d808cfce backend: 添加镜像上传/重传、上传记录查看； apiserver: 添加job资源操作、pvc/pc(tdsc)增删接口
+b068a205 backend: 添加镜像上传/重传、上传记录查看； apiserver: 添加job资源操作、pvc/pc(tdsc)增删接口
+b093f98b 支持查询队列内的所有工作负载
+07cc70f1 支持查询队列内的所有工作负载
+0697e54e development of online service management.
+eb7808ee development of online service management and workload management.
+bd6141f0 修复查询队列剩余资源单位问题
+a9995200 修复查询队列剩余资源单位问题
+4158dc25 增加队列详情文档，增加队列详情的基础转发接口
+e9d93de7 增加队列详情文档，增加队列详情的基础转发接口
+93da484e 完善获取可提交任务的叶子队列接口
+ff5b6a06 完善获取可提交任务的叶子队列接口
+879e40ce 修复获取队列层级递归错误，修改内存资源返回格式
+8a28d895 修复获取队列层级递归错误，修改内存资源返回格式
+fbf3ec32 完善获取队列剩余可分配资源接口
+30c5a11c 完善获取队列剩余可分配资源接口
+bfda7fa1 完成更新子队列配额接口
+5f6d0241 完成更新子队列配额接口
+93f549d7 修复: 解决resource.Quantity方法调用问题并优化队列操作
+938d5b85 修复: 解决resource.Quantity方法调用问题并优化队列操作
+4665b8e0 更新apiserver volcanoquque的接口，使用v1.resourcelist代替map
+6573463a 更新apiserver volcanoquque的接口，使用v1.resourcelist代替map
+6e1434b9 完善查询队列接口
+aaf2037b 完善查询队列接口
+1855891c 使用volcano.sh/apis 代替volcano相关的数据
+2d8e4a90 使用volcano.sh/apis 代替volcano相关的数据
+8cc00215 下载文件接口返回文件类型
+f5210fcf 下载文件接口返回文件类型
+1e1aa513 add projectqueue apis
+7f8fde7f add projectqueue apis
+57ab4fdc 更新地域接口文档，删除无用接口；更新分片上次接口增加内容长度字段
+72708a6e 更新地域接口文档，删除无用接口；更新分片上次接口增加内容长度字段
+d78ab87b add harbor client v2 https/http
+37a7185f add harbor client https/http
+2f097f4f bugfix: fix repository list question
+c6f6f090 bugfix: fix repository list question
+9170989d add repository and images manager api
+bb61f567 region增加根据projectid查询集群和存储池接口
+01680cf6 add repository and images manager api
+0e457fe1 region增加根据projectid查询集群和存储池接口
+b1c10a5b 新增地域(region)接口
+87e3e554 apiserver添加集群tdsc配置参数
+fe9d8cd2 新增地域(region)接口
+6e2a32ad 增加存储网盘的文件夹管理和文件上传下载接口(适配s3)
+6e798aea 增加存储网盘的文件夹管理和文件上传下载接口(适配s3)
+052d6c62 add new run flag
+68cbfa16 add new run flag
+688b82a5 update kubeconfig download api flag
+c92fd645 update kubeconfig download api flag
+ac19dbdc update kubeConfig api with project
+c9f127a5 update kubeConfig api with project
+12605097 bugfix: get cluster computing quota
+d026f155 bugfix: get cluster computing quota
+eb8ba0f8 新增storagepool表和创建查询接口
+0833e2ec feature: add GET-/tenants/:tenantId/projects/:projectId, GET-/clusters/:clusterCode/computingQuota api
+b640d22c feature: add GET-/tenants/:tenantId/projects/:projectId, GET-/clusters/:clusterCode/computingQuota api
+e7746b4d 新增storagepool表和创建查询接口
+3b08064e feature: add tenant and project db models
+3596f334 feature: add tenant and project db models
+7d811a2b Support development machines feature
+287cb0d5 feat(dev-machines): implement development machines feature
+3e5a249f add kubeconfig download api && fix networkpolicy ut
+0b288f9d add kubeconfig download api && fix networkpolicy ut

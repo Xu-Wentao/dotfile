@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+WORKDIR="${WORKDIR:-workdir}"
+# Ensure WORKDIR is absolute; if not, place it under HOME
+[[ "${WORKDIR}" != /* ]] && WORKDIR="${HOME}/${WORKDIR}"
+PORT="${VSCODE_PORT:-8080}"
+
+if [ ! -d "${WORKDIR}" ]; then
+   echo "[INFO] WORKDIR '${WORKDIR}' does not exist, creating..."
+   mkdir -p "${WORKDIR}"
+fi
+
+exec /opt/dev/bin/code-server/bin/code-server \
+  --bind-addr "0.0.0.0:${PORT}" \
+  --auth none \
+  "${WORKDIR}"

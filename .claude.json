@@ -1,5 +1,5 @@
 {
-  "numStartups": 1029,
+  "numStartups": 1030,
   "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -467,7 +467,7 @@
   "thinkingMigrationComplete": true,
   "hasCompletedOnboarding": true,
   "userID": "224ac9ac5517a3272395f37238436094a53e8800e3739d293434a035d12ed932",
-  "lastReleaseNotesSeen": "2.1.92",
+  "lastReleaseNotesSeen": "2.1.94",
   "projects": {
     "/Users/xuwentao": {
       "allowedTools": [],
@@ -2108,7 +2108,7 @@
       "lastUsedAt": 1774918276370
     }
   },
-  "changelogLastFetched": 1775572267749,
+  "changelogLastFetched": 1775609719580,
   "claudeCodeFirstTokenDate": "2026-03-12T01:12:59.497859Z",
   "anonymousId": "claudecode.v1.144a70f4-c25e-4ba6-93a9-8ec431513a62",
   "claudeAiMcpEverConnected": [
@@ -2134,7 +2134,6 @@
     "displayName": "xuwentao"
   },
   "voiceNoticeSeenCount": 3,
-  "opus1mMergeNoticeSeenCount": 6,
   "effortCalloutV2Dismissed": true,
   "additionalModelOptionsCache": [],
   "deepLinkTerminal": "Ghostty",

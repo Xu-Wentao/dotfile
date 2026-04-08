@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "plugins": {
+    "codex@openai-codex": [
+      {
+        "scope": "user",
+        "installPath": "/Users/xuwentao/.claude/plugins/cache/openai-codex/codex/1.0.0",
+        "version": "1.0.0",
+        "installedAt": "2026-03-31T00:50:52.019Z",
+        "lastUpdated": "2026-03-31T00:50:52.019Z",
+        "gitCommitSha": "f4d65d9641fadc7632afecd5735daf8e16060c98"
+      }
+    ],
+    "cocoindex-skills@cocoindex": [
+      {
+        "scope": "user",
+        "installPath": "/Users/xuwentao/.claude/plugins/cache/cocoindex/cocoindex-skills/bda583450a55",
+        "version": "bda583450a55",
+        "installedAt": "2026-03-31T07:18:08.844Z",
+        "lastUpdated": "2026-03-31T07:18:08.844Z",
+        "gitCommitSha": "bda583450a55f04371d177d188ceb61765fa4efb"
+      }
+    ]
+  }
+}

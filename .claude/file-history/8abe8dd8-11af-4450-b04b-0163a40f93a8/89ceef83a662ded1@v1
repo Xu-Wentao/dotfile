@@ -1,0 +1,649 @@
+<template>
+  <div class="list-content-wrapper">
+    <a-spin :spinning="permissionStore.spinning">
+      <div class="wrapper">
+        <div class="wrapper-title">
+          <span class="title-icon"></span>
+          <span>基本信息</span>
+        </div>
+        <basic ref="basicRef" :params="formState" />
+      </div>
+      <div class="wrapper">
+        <div class="wrapper-title">
+          <span class="title-icon"></span>
+          <span>实例容器配置</span>
+        </div>
+        <example ref="exampleRef" :params="formState" />
+      </div>
+      <div class="footer">
+        <a-button style="margin-right: 8px" @click="handleCancel">取消</a-button>
+        <a-button type="primary" @click="handleSubmit">保存</a-button>
+      </div>
+    </a-spin>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import basic from './components/basic.vue'
+import example from '../customManage/components/example.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { usePermissionStore } from '@/store/modules/permission'
+import { message } from 'ant-design-vue'
+import { createInferenceServing, getInferenceServingDetail, updateInferenceServing } from '@/services/api/operationManage/inferenceService'
+
+const permissionStore = usePermissionStore()
+const route = useRoute()
+const router = useRouter()
+
+const basicRef = ref()
+const exampleRef = ref()
+
+const createDefaultTasks = () => ([
+  {
+    key: '1',
+    name: 'task1',
+    replicas: '',
+    hostNetwork: false,
+    containers: [
+      {
+        key: '1',
+        name: 'container1',
+        replicas: '',
+        imageConfig: {
+          imageType: 'custom',
+          repositoryId: null,
+          imageCascader: [],
+          domain: '',
+          project: '',
+          imageName: '',
+        },
+        imagePullPolicy: 'IfNotPresent',
+        commandShell: '',
+        commandText: '',
+        environmentVarsData: [{ key: '', value: '' }],
+        ports: [],
+        privileged: false,
+        cpu: '',
+        memory: '',
+        storage: [{ storagePoolId: 0, storageType: null, storagePath: '', mountPath: '' }],
+      },
+    ],
+  },
+])
+
+const formState = ref({
+  name: '',
+  inferenceFramework: null as string | null,
+  modelPort: null as number | null,
+  replicas: null as number | null,
+  servingType: 'VolcanoJob',
+  type: 'VolcanoJob', // 兼容容器配置组件
+  clusterCode: null as string | null,
+  queueId: null as string | null,
+  queueName: null as string | null,
+  labelData: [{ key: '', value: '' }],
+  annotateData: [{ key: '', value: '' }],
+  maxRetry: 1,
+  minAvailable: '',
+  pluginsData: [{ key: null, value: '' }],
+  selectedQueueResource: null as any,
+  tasks: createDefaultTasks(),
+})
+
+const initialiseCommands = () => {
+  formState.value.tasks.forEach((task: any) => {
+    task.containers?.forEach((container: any) => {
+      if (!container.commandShell) container.commandShell = '/bin/bash'
+      if (!container.commandText) container.commandText = 'sleep 3000'
+    })
+  })
+}
+
+onMounted(async () => {
+  if (route.params.title === '编辑') {
+    permissionStore.spinning = true
+    await getInferenceDetail()
+  } else {
+    initialiseCommands()
+  }
+})
+
+const getInferenceDetail = async () => {
+  try {
+    const res: any = await getInferenceServingDetail(permissionStore.curProject, route.query.id)
+    if (res.code !== '00000') return
+    const data = res.respBody || {}
+    const volcanoJob = data.volcanoJob || {}
+
+    formState.value.name = data.modelName || ''
+    formState.value.inferenceFramework = data.inferenceFramework || null
+    formState.value.modelPort = data.modelPort ? Number(data.modelPort) : null
+    formState.value.replicas = data.replicas !== undefined && data.replicas !== null
+      ? Number(data.replicas)
+      : null
+    formState.value.servingType = data.servingType || 'VolcanoJob'
+    formState.value.type = formState.value.servingType
+    formState.value.clusterCode = data.clusterCode || ''
+    formState.value.queueName = data.queueName || ''
+
+    await basicRef.value?.handleClusterChange(data.clusterCode)
+    await basicRef.value?.handleQueueChange(data.queueName)
+    await exampleRef.value?.getCustomData(volcanoJob)
+
+    formState.value.maxRetry = volcanoJob.maxRetry ?? 1
+    formState.value.minAvailable = volcanoJob.minAvailable ?? ''
+
+    formState.value.labelData = volcanoJob.labels
+      ? Object.entries(volcanoJob.labels).map(([key, value]) => ({ key, value: String(value) }))
+      : [{ key: '', value: '' }]
+
+    formState.value.annotateData = volcanoJob.annotations
+      ? Object.entries(volcanoJob.annotations).map(([key, value]) => ({ key, value: String(value) }))
+      : [{ key: '', value: '' }]
+
+    formState.value.pluginsData = volcanoJob.plugins
+      ? Object.entries(volcanoJob.plugins).map(([key, value]) => ({ key, value: String(value) })) || [{ key: null, value: '' }]
+      : [{ key: null, value: '' }]
+
+    formState.value.tasks = Array.isArray(volcanoJob.tasks) && volcanoJob.tasks.length
+      ? volcanoJob.tasks
+      : createDefaultTasks()
+
+    formState.value.tasks.forEach((task: any, taskIndex: number) => {
+      task.key = String(taskIndex + 1)
+      task.containers?.forEach((container: any, containerIndex: number) => {
+        container.key = String(containerIndex + 1)
+
+        if (container.environmentVars && typeof container.environmentVars === 'object') {
+          container.environmentVarsData = Object.entries(container.environmentVars).map(([key, value]) => ({
+            key,
+            value: String(value),
+          }))
+        } else {
+          container.environmentVarsData = [{ key: '', value: '' }]
+        }
+
+        if (container.imageConfig) {
+          container.imageConfig.imageType = container.imageConfig.project === 'preset-job-images' ? 'preset' : 'custom'
+          container.imageConfig.imageCascader = [container.imageConfig.project, container.imageConfig.imageName]
+        }
+
+        container.cpu = container.cpu ? Number(container.cpu) : ''
+        container.memory = container.memory ? Number(container.memory) : ''
+        container.gpu = container.gpu ? Number(container.gpu) : ''
+
+        if (Array.isArray(container.command)) {
+          container.commandShell = container.command[0] || ''
+          container.commandText = container.command.length >= 3 ? (container.command[2] || '') : ''
+        } else {
+          container.commandShell = container.commandShell || ''
+          container.commandText = container.commandText || ''
+        }
+
+        if (Array.isArray(container.storage)) {
+          container.storage = container.storage.map((item: any) => {
+            const storageType = item.StorageType === 'hostPath'
+              ? 'hostPath'
+              : item.StorageType === 'tdsc'
+                ? 'tdsc'
+                : ''
+
+            let displayStoragePath = item.storagePath || ''
+            if (displayStoragePath.startsWith('/')) displayStoragePath = displayStoragePath.slice(1)
+
+            return {
+              storagePoolId: item.storagePoolId == 0 ? [] : [item.storagePoolId ? Number(item.storagePoolId) : 0, displayStoragePath],
+              storageType,
+              storagePath: displayStoragePath,
+              mountPath: item.mountPath || '',
+            }
+          })
+        }
+      })
+    })
+  } finally {
+    permissionStore.spinning = false
+  }
+}
+
+const validateKeyValue = (list: any[], typeLabel: string) => {
+  for (const [index, item] of list.entries()) {
+    const hasKey = item.key && item.key.trim() !== ''
+    const hasValue = item.value && item.value.trim() !== ''
+    if (hasValue && !hasKey) {
+      message.error(`请完善第${index + 1}个${typeLabel}的配置：输入key值`)
+      return false
+    }
+  }
+  return true
+}
+
+const validateEnvironmentVars = (vars: any[]) => {
+  const keySet = new Set()
+  for (const [index, item] of vars.entries()) {
+    const hasKey = item.key && item.key.trim() !== ''
+    const hasValue = item.value && item.value.trim() !== ''
+    if (hasKey && !hasValue) {
+      message.error(`请完善第${index + 1}个环境变量的配置：输入value值`)
+      return false
+    }
+    if (hasValue && !hasKey) {
+      message.error(`请完善第${index + 1}个环境变量的配置：输入key值`)
+      return false
+    }
+    if (hasKey) {
+      const trimmedKey = item.key.trim()
+      if (keySet.has(trimmedKey)) {
+        message.error(`环境变量 key 存在重复：${trimmedKey}`)
+        return false
+      }
+      keySet.add(trimmedKey)
+    }
+  }
+  return true
+}
+
+const hasDuplicateProperty = (arr: any[], key: string) => {
+  const seen = new Set()
+  for (const item of arr) {
+    if (item[key] !== undefined) {
+      if (seen.has(item[key])) return true
+      seen.add(item[key])
+    }
+  }
+  return false
+}
+
+const validatePorts = (ports: any[]) => {
+  if (!Array.isArray(ports) || !ports.length) return true
+  const nameRegex = /^[a-z][a-z0-9-]{0,14}$/
+  for (const port of ports) {
+    if (!port.containerPort) {
+      message.error('请输入容器端口')
+      return false
+    }
+    if (!port.name) {
+      message.error('请输入端口名')
+      return false
+    }
+    if (!port.protocol) {
+      message.error('请选择通信方式')
+      return false
+    }
+    if (!nameRegex.test(port.name)) {
+      message.error('端口名称仅支持输入小写字母、数字、连字符，小写字母开头结尾，不超过15个字符')
+      return false
+    }
+  }
+  if (hasDuplicateProperty(ports, 'containerPort')) {
+    message.error('端口配置的容器端口存在重复')
+    return false
+  }
+  if (hasDuplicateProperty(ports, 'name')) {
+    message.error('端口配置的端口名存在重复')
+    return false
+  }
+  return true
+}
+
+// 校验镜像必填
+const validateImageConfig = (container: any) => {
+  const imageConfig = container.imageConfig || {}
+  const cascader = imageConfig.imageCascader
+
+  // 需要选择镜像仓库和镜像名称
+  if (!Array.isArray(cascader) || cascader.length < 2 || !cascader[0] || !cascader[1]) {
+    message.error('请选择镜像')
+    return false
+  }
+
+  return true
+}
+
+const validateResources = (container: any) => {
+  if (!container.cpu) {
+    message.error('请输入cpu')
+    return false
+  }
+  if (Number(container.cpu) < 0.1) {
+    message.error('CPU最小值为0.1')
+    return false
+  }
+  if (!/^(\d+)(\.\d)?$/.test(String(container.cpu))) {
+    message.error('CPU只支持小数点后一位')
+    return false
+  }
+  if (!container.memory) {
+    message.error('请输入内存')
+    return false
+  }
+  if (Number(container.memory) < 0.1) {
+    message.error('内存最小值为0.1')
+    return false
+  }
+  if (container.gpuName && !container.gpu) {
+    message.error('请输入GPU数量')
+    return false
+  }
+  if (container.gpu) {
+    if (Number(container.gpu) < 1) {
+      message.error('GPU最小值为1')
+      return false
+    }
+    if (!Number.isInteger(Number(container.gpu))) {
+      message.error('GPU数量必须为正整数')
+      return false
+    }
+  }
+  return true
+}
+
+const validateStorage = (rows: any[]) => {
+  for (const [index, item] of rows.entries()) {
+    if (item.storageType === 'tdsc') {
+      const arr = Array.isArray(item.storagePoolId) ? item.storagePoolId : []
+      if (!arr[0]) {
+        message.error(`请完善第${index + 1}个数据卷的配置：选择存储池`)
+        return false
+      }
+      if (arr.length < 2 || !arr[1]) {
+        message.error(`请完善第${index + 1}个数据卷的配置：选择网盘路径`)
+        return false
+      }
+      if (!item.mountPath) {
+        message.error(`请完善第${index + 1}个数据卷的配置：输入挂载路径`)
+        return false
+      }
+    } else if (item.storageType === 'hostPath') {
+      if (!item.storagePath || !item.mountPath) {
+        message.error(`请完善第${index + 1}个数据卷的配置：填写本地路径和挂载路径`)
+        return false
+      }
+    }
+  }
+  return true
+}
+
+const hasDuplicateTaskNames = (tasks: any[], key: string) => {
+  const seen = new Set()
+  for (const task of tasks) {
+    const value = task[key]
+    if (typeof value === 'string') {
+      if (seen.has(value)) return true
+      seen.add(value)
+    }
+  }
+  return false
+}
+
+const hasDuplicateContainerPorts = (containers: any[]) => {
+  const seenNames = new Set()
+  const seenPorts = new Set()
+  for (const container of containers) {
+    if (!Array.isArray(container.ports)) continue
+    for (const port of container.ports) {
+      if (port.name && seenNames.has(port.name)) return true
+      if (port.containerPort && seenPorts.has(port.containerPort)) return true
+    }
+    for (const port of container.ports) {
+      if (port.name) seenNames.add(port.name)
+      if (port.containerPort) seenPorts.add(port.containerPort)
+    }
+  }
+  return false
+}
+
+const handleSubmit = async () => {
+  const nameRegex = /^(?=[a-z])[a-z0-9-]{1,63}$/
+
+  if (!formState.value.name) {
+    message.error('请输入模型名称')
+    return
+  }
+  if (!nameRegex.test(formState.value.name)) {
+    message.error('模型名称仅支持小写字母、数字、连字符，小写字母开头，不超过63个字符')
+    return
+  }
+  if (!formState.value.clusterCode) {
+    message.error('请选择集群')
+    return
+  }
+  if (!formState.value.queueName) {
+    message.error('请选择队列')
+    return
+  }
+  if (formState.value.modelPort === null || Number(formState.value.modelPort) < 1 || Number(formState.value.modelPort) > 65535) {
+    message.error('模型端口范围为1-65535')
+    return
+  }
+  const replicasNum = Number(formState.value.replicas)
+  if (
+    formState.value.replicas === null ||
+    formState.value.replicas === undefined ||
+    replicasNum < 0 ||
+    !Number.isInteger(replicasNum) ||
+    replicasNum > 10000
+  ) {
+    message.error('服务数量需为 0~10000 的整数')
+    return
+  }
+  // 最大重试次数：1~10 的正整数
+  const maxRetryNum = Number(formState.value.maxRetry)
+  if (
+    formState.value.maxRetry === null ||
+    formState.value.maxRetry === undefined ||
+    !Number.isInteger(maxRetryNum) ||
+    maxRetryNum < 1 ||
+    maxRetryNum > 10
+  ) {
+    message.error('最大重试次数需为 1~10 的正整数')
+    return
+  }
+  // 最小启动数量：1~10 的正整数
+  const minAvailableNum = Number(formState.value.minAvailable)
+  if (
+    formState.value.minAvailable === null ||
+    formState.value.minAvailable === undefined ||
+    !Number.isInteger(minAvailableNum) ||
+    minAvailableNum < 1 ||
+    minAvailableNum > 10
+  ) {
+    message.error('最小启动数量需为 1~10 的正整数')
+    return
+  }
+
+  if (!validateKeyValue(formState.value.labelData, '标签') || !validateKeyValue(formState.value.annotateData, '注解')) {
+    return
+  }
+
+  await basicRef.value?.validate()
+  await exampleRef.value?.validate()
+
+  const params: any = JSON.parse(JSON.stringify(formState.value))
+
+  params.labels = {}
+  params.labelData.forEach((item: any) => {
+    if (item.key) params.labels[item.key] = item.value
+  })
+
+  params.annotations = {}
+  params.annotateData.forEach((item: any) => {
+    if (item.key) params.annotations[item.key] = item.value
+  })
+
+  params.plugins = {}
+  params.pluginsData.forEach((item: any) => {
+    if (item.key) params.plugins[item.key] = item.value
+  })
+
+  if (hasDuplicateTaskNames(params.tasks, 'name')) {
+    message.error('实例名称不允许重复')
+    return
+  }
+
+  for (const task of params.tasks) {
+    if (!task.name || !nameRegex.test(task.name)) {
+      message.error('请检查实例名称，需满足DNS规范')
+      return
+    }
+    if (!task.replicas) {
+      message.error('请输入副本数')
+      return
+    }
+    if (hasDuplicateTaskNames(task.containers, 'name')) {
+      message.error('容器名称不允许重复')
+      return
+    }
+
+    for (const container of task.containers) {
+      if (!container.name || !nameRegex.test(container.name)) {
+        message.error('请检查容器名称，需满足DNS规范')
+        return
+      }
+      if (!validateImageConfig(container)) return
+      if (!validateEnvironmentVars(container.environmentVarsData)) return
+      if (!validatePorts(container.ports)) return
+      if (!validateResources(container)) return
+      if (!validateStorage(container.storage)) return
+
+      container.environmentVars = {}
+      container.environmentVarsData.forEach((item: any) => {
+        if (item.key) container.environmentVars[item.key] = item.value
+      })
+
+      const shell = (container.commandShell || '').trim()
+      const cmd = (container.commandText || '').trim()
+      container.command = shell && cmd ? [shell, '-c', cmd] : []
+
+      if (container.gpuRatio) container.gpuRatio = Number(container.gpuRatio) / 100
+
+      container.cpu = container.cpu !== '' ? String(container.cpu) : ''
+      container.memory = container.memory !== '' ? String(container.memory) : ''
+      container.gpu = container.gpu !== '' ? String(container.gpu) : ''
+
+      container.imageConfig.project = container.imageConfig.imageCascader[0]
+      container.imageConfig.imageName = container.imageConfig.imageCascader[1]
+      container.imageConfig.domain = params.imageRepoList?.find((item: any) => item.id === container.imageConfig.repositoryId)?.domain || ''
+
+      container.storage = container.storage.map((item: any) => {
+        if (item.storageType === 'tdsc') {
+          const arr = Array.isArray(item.storagePoolId) ? item.storagePoolId : []
+          let storagePath = ''
+          if (arr.length > 1) {
+            const last = arr[arr.length - 1]
+            storagePath = last.replace(/^\/?/, '/').replace(/\/$/, '')
+          }
+          return {
+            storagePoolId: arr[0] || 0,
+            storageType: 'tdsc',
+            storagePath,
+            mountPath: item.mountPath,
+          }
+        }
+        if (item.storageType === 'hostPath') {
+          let storagePath = item.storagePath || ''
+          if (storagePath && !storagePath.startsWith('/')) storagePath = `/${storagePath}`
+          return {
+            storagePoolId: 0,
+            storageType: 'hostPath',
+            storagePath,
+            mountPath: item.mountPath,
+          }
+        }
+        return {
+          storagePoolId: 0,
+          storageType: '',
+          storagePath: '',
+          mountPath: '',
+        }
+      })
+    }
+
+    if (hasDuplicateContainerPorts(task.containers)) {
+      message.error('端口配置中同实例下容器端口与端口名均不可重复')
+      return
+    }
+  }
+
+  // 任务数量需大于等于最小启动数（实例数校验）
+  const minAvailableVal = Number(formState.value.minAvailable)
+  if (minAvailableVal && formState.value.tasks.length < minAvailableVal) {
+    message.error('最小启动数量需小于等于所有任务的副本数总和')
+    return
+  }
+
+  const payload = {
+    modelName: params.name,
+    inferenceFramework: params.inferenceFramework,
+    modelPort: Number(params.modelPort),
+    replicas: Number(params.replicas),
+    servingType: params.servingType || 'VolcanoJob',
+    clusterCode: params.clusterCode,
+    queueName: params.queueName,
+    volcanoJob: {
+      labels: params.labels,
+      annotations: params.annotations,
+      maxRetry: Number(params.maxRetry),
+      minAvailable: Number(params.minAvailable),
+      plugins: params.plugins,
+      tasks: params.tasks,
+    },
+  }
+
+  permissionStore.spinning = true
+  try {
+    const res: any = route.params.title === '编辑'
+      ? await updateInferenceServing(permissionStore.curProject, route.query.id, payload)
+      : await createInferenceServing(permissionStore.curProject, payload)
+    if (res.code === '00000') {
+      message.success(route.params.title === '编辑' ? '更新成功' : '创建成功')
+      router.back()
+    }
+  } finally {
+    permissionStore.spinning = false
+  }
+}
+
+const handleCancel = () => {
+  router.back()
+}
+</script>
+
+<style lang="scss" scoped>
+.list-content-wrapper {
+  position: relative;
+}
+::deep(.ant-spin-dot) {
+  top: 200px !important;
+}
+.wrapper {
+  padding: 15px 204px;
+  .wrapper-title {
+    height: 30px;
+    padding: 7px 0;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    span {
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-size: 14px;
+    }
+    .title-icon {
+      display: block;
+      width: 3px;
+      background-color: #3570ee;
+      border-radius: 5px;
+      height: 100%;
+      margin-right: 5px;
+    }
+  }
+}
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 20px 20px 0;
+}
+</style>

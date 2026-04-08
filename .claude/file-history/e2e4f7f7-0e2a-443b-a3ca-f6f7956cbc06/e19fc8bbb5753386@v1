@@ -1,0 +1,641 @@
+package devmachine
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/goharbor/harbor/src/lib/log"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/utils/ptr"
+
+	devmachinemodel "code.srdcloud.cn/TDP-PaaS/tap/tap-edu-backend/internal/model/devmachine"
+	resourcesvc "code.srdcloud.cn/TDP-PaaS/tap/tap-edu-backend/internal/service/resource"
+	"code.srdcloud.cn/TDP-PaaS/tap/tap-edu-backend/pkg/util"
+)
+
+// ==================== Deployment 构建 ====================
+
+// generateDevMachineDeployment 生成开发机 Deployment
+func generateDevMachineDeployment(request *devmachinemodel.CreateDevmachineRequest, initContainerImage string) *appsv1.Deployment {
+	labels := generateLabels(request.Namespace, request.Name, request.Labels)
+	annotations := generateAnnotations(request.QueueName, request.Annotations)
+
+	deployment := &appsv1.Deployment{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        request.Name,
+			Namespace:   request.Namespace,
+			Labels:      labels,
+			Annotations: annotations,
+		},
+		Spec: appsv1.DeploymentSpec{
+			Replicas: ptr.To[int32](1),
+			Selector: &metav1.LabelSelector{
+				MatchLabels: labels,
+			},
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels:      labels,
+					Annotations: annotations,
+				},
+				Spec: buildPodSpec(request, initContainerImage),
+			},
+		},
+	}
+
+	return deployment
+}
+
+// buildPodSpec 构建 Pod 规范
+func buildPodSpec(request *devmachinemodel.CreateDevmachineRequest, initContainerImage string) corev1.PodSpec {
+	webIDE := request.WebIDE
+	if webIDE == "" {
+		webIDE = devmachinemodel.WebIDEJupyter
+	}
+
+	// 构建基础卷（emptyDir）
+	volumes := buildVolumes(webIDE)
+
+	// 添加共享存储卷（按 ReadOnly 去重，最多 2 个）
+	storageVolumes := buildSharedVolumes(request.Storage)
+	volumes = append(volumes, storageVolumes...)
+
+	return corev1.PodSpec{
+		SchedulerName:  volcanoSchedulerName,
+		NodeSelector:   request.NodeSelector,
+		Volumes:        volumes,
+		InitContainers: buildInitContainers(initContainerImage, webIDE),
+		Containers:     buildContainers(request),
+	}
+}
+
+// ==================== Volume 构建 ====================
+
+// buildVolumes 构建存储卷
+func buildVolumes(webIDE devmachinemodel.WebIDEType) []corev1.Volume {
+	// 基础卷（所有类型共享）
+	volumes := []corev1.Volume{
+		{
+			Name: devVolumeName,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
+			},
+		},
+	}
+
+	// Jupyter 需要额外的 bootstrap-jupyter emptyDir
+	if webIDE == devmachinemodel.WebIDEJupyter {
+		volumes = append(volumes, corev1.Volume{
+			Name: bootstrapJupyterVolumeName,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
+			},
+		})
+	}
+
+	return volumes
+}
+
+// ==================== InitContainer 构建 ====================
+
+// buildInitContainers 构建初始化容器
+func buildInitContainers(initContainerImage string, webIDE devmachinemodel.WebIDEType) []corev1.Container {
+	return []corev1.Container{
+		{
+			Name:         initContainerName,
+			Image:        initContainerImage,
+			Command:      buildInitCommand(),
+			Env:          buildInitEnv(webIDE),
+			VolumeMounts: buildInitVolumeMounts(webIDE),
+		},
+	}
+}
+
+// buildInitCommand 构建初始化命令
+func buildInitCommand() []string {
+	// 统一使用脚本模式
+	initScript := `echo "[init] start dev bootstrap"
+/dev-bootstrap/entrypoint.sh
+echo "[init] bootstrap finished"`
+	return []string{"sh", "-c", initScript}
+}
+
+// buildInitVolumeMounts 构建初始化容器的卷挂载
+func buildInitVolumeMounts(webIDE devmachinemodel.WebIDEType) []corev1.VolumeMount {
+	// 基础挂载（所有类型共享）
+	mounts := []corev1.VolumeMount{
+		{
+			Name:      devVolumeName,
+			MountPath: "/opt/dev",
+		},
+	}
+
+	// Jupyter 额外挂载 bootstrap-jupyter
+	if webIDE == devmachinemodel.WebIDEJupyter {
+		mounts = append(mounts, corev1.VolumeMount{
+			Name:      bootstrapJupyterVolumeName,
+			MountPath: "/mnt/",
+		})
+	}
+
+	return mounts
+}
+
+// buildInitEnv 构建初始化容器的环境变量
+func buildInitEnv(webIDE devmachinemodel.WebIDEType) []corev1.EnvVar {
+	// 根据 WebIDE 类型设置 DEV_MODE
+	devMode := "jupyter" // 默认
+	if webIDE == devmachinemodel.WebIDEVSCode {
+		devMode = "vscode"
+	}
+
+	return []corev1.EnvVar{
+		{
+			Name:  "DEV_MODE",
+			Value: devMode,
+		},
+	}
+}
+
+// ==================== Container 构建 ====================
+
+// buildContainers 构建应用容器
+func buildContainers(request *devmachinemodel.CreateDevmachineRequest) []corev1.Container {
+	webIDE := request.WebIDE
+	if webIDE == "" {
+		webIDE = devmachinemodel.WebIDEJupyter // 默认使用 Jupyter
+	}
+
+	switch webIDE {
+	case devmachinemodel.WebIDEVSCode:
+		return []corev1.Container{buildVSCodeContainer(request)}
+	default:
+		return []corev1.Container{buildJupyterContainer(request)}
+	}
+}
+
+// ==================== Jupyter Container 构建 ====================
+
+// buildJupyterContainer 构建 Jupyter 容器
+func buildJupyterContainer(request *devmachinemodel.CreateDevmachineRequest) corev1.Container {
+	// 构建基础卷挂载
+	volumeMounts := buildJupyterVolumeMounts()
+
+	// 添加共享存储卷挂载（subPath 隔离）
+	storageVolumeMounts := buildSharedVolumeMounts(request.Storage)
+	volumeMounts = append(volumeMounts, storageVolumeMounts...)
+
+	container := corev1.Container{
+		Name:            "jupyter",
+		Image:           request.ImageName,
+		ImagePullPolicy: corev1.PullIfNotPresent,
+		Env:             buildJupyterEnv(request.WorkDir),
+		VolumeMounts:    volumeMounts,
+		Ports:           buildJupyterPorts(),
+		Command:         buildUserContainerCommand(),
+		LivenessProbe:   buildJupyterProbe(),
+		ReadinessProbe:  buildJupyterProbe(),
+	}
+
+	// 设置资源请求和限制
+	container.Resources = BuildResourceRequirements(request.CPU, request.Memory, request.GPU, request.GPUName)
+
+	return container
+}
+
+// buildJupyterEnv 构建 Jupyter 环境变量
+func buildJupyterEnv(workDir string) []corev1.EnvVar {
+	resolvedWorkDir := resolveWorkDir(workDir)
+
+	return []corev1.EnvVar{
+		{
+			Name:  "DEV_MODE",
+			Value: "jupyter",
+		},
+		{
+			Name:  "WORKDIR",
+			Value: resolvedWorkDir,
+		},
+		{
+			Name: "POD_NAMESPACE",
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "metadata.namespace",
+				},
+			},
+		},
+		{
+			Name: "DEPLOYMENT_NAME",
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "metadata.labels['app']",
+				},
+			},
+		},
+	}
+}
+
+// buildJupyterVolumeMounts 构建 Jupyter 卷挂载
+func buildJupyterVolumeMounts() []corev1.VolumeMount {
+	return []corev1.VolumeMount{
+		{
+			Name:      devVolumeName,
+			MountPath: "/opt/dev",
+		},
+		{
+			Name:      bootstrapJupyterVolumeName,
+			MountPath: "/dev-bootstrap/tools/jupyter",
+			SubPath:   "jupyter",
+		},
+	}
+}
+
+// buildJupyterPorts 构建 Jupyter 端口
+func buildJupyterPorts() []corev1.ContainerPort {
+	return []corev1.ContainerPort{
+		{
+			ContainerPort: jupyterPort,
+		},
+	}
+}
+
+// ==================== VSCode Container 构建 ====================
+
+// buildVSCodeContainer 构建 VSCode 容器
+func buildVSCodeContainer(request *devmachinemodel.CreateDevmachineRequest) corev1.Container {
+	// 构建基础卷挂载
+	volumeMounts := buildVSCodeVolumeMounts()
+
+	// 添加共享存储卷挂载（subPath 隔离）
+	storageVolumeMounts := buildSharedVolumeMounts(request.Storage)
+	volumeMounts = append(volumeMounts, storageVolumeMounts...)
+
+	container := corev1.Container{
+		Name:            "vscode",
+		Image:           request.ImageName,
+		ImagePullPolicy: corev1.PullIfNotPresent,
+		Env:             buildVSCodeEnv(request.WorkDir),
+		VolumeMounts:    volumeMounts,
+		Ports:           buildVSCodePorts(),
+		Command:         buildUserContainerCommand(),
+		LivenessProbe:   buildVscodeProbe(),
+		ReadinessProbe:  buildVscodeProbe(),
+	}
+
+	// 设置资源请求和限制
+	container.Resources = BuildResourceRequirements(request.CPU, request.Memory, request.GPU, request.GPUName)
+
+	return container
+}
+
+// buildVSCodeEnv 构建 VSCode 环境变量
+func buildVSCodeEnv(workDir string) []corev1.EnvVar {
+	resolvedWorkDir := resolveWorkDir(workDir)
+
+	return []corev1.EnvVar{
+		{
+			Name:  "DEV_MODE",
+			Value: "vscode",
+		},
+		{
+			Name:  "WORKDIR",
+			Value: resolvedWorkDir,
+		},
+		{
+			Name: "POD_NAMESPACE",
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "metadata.namespace",
+				},
+			},
+		},
+		{
+			Name: "DEPLOYMENT_NAME",
+			ValueFrom: &corev1.EnvVarSource{
+				FieldRef: &corev1.ObjectFieldSelector{
+					FieldPath: "metadata.labels['app']",
+				},
+			},
+		},
+	}
+}
+
+// buildVSCodeVolumeMounts 构建 VSCode 卷挂载
+func buildVSCodeVolumeMounts() []corev1.VolumeMount {
+	return []corev1.VolumeMount{
+		{
+			Name:      devVolumeName,
+			MountPath: "/opt/dev",
+		},
+	}
+}
+
+// buildVSCodePorts 构建 VSCode 端口
+func buildVSCodePorts() []corev1.ContainerPort {
+	return []corev1.ContainerPort{
+		{
+			ContainerPort: vscodePort,
+		},
+	}
+}
+
+// buildLivenessProbe 构建 探针
+func buildVscodeProbe() *corev1.Probe {
+	return &corev1.Probe{
+		ProbeHandler: corev1.ProbeHandler{
+			HTTPGet: &corev1.HTTPGetAction{
+				Path: "/", // 健康检查端点
+				Port: intstr.FromInt(vscodePort),
+			},
+		},
+		InitialDelaySeconds: 5,  // 容器启动后5秒开始检查
+		PeriodSeconds:       5,  // 每5秒检查一次
+		TimeoutSeconds:      5,  // 超时时间5秒
+		SuccessThreshold:    1,  // 成功阈值
+		FailureThreshold:    10, // 失败阈值
+	}
+}
+
+// buildReadynessProbe 构建 探针
+func buildJupyterProbe() *corev1.Probe {
+	return &corev1.Probe{
+		ProbeHandler: corev1.ProbeHandler{
+			TCPSocket: &corev1.TCPSocketAction{
+				Port: intstr.FromInt(jupyterPort),
+			},
+		},
+		InitialDelaySeconds: 5,  // 容器启动后5秒开始检查
+		PeriodSeconds:       5,  // 每5秒检查一次
+		TimeoutSeconds:      5,  // 超时时间5秒
+		SuccessThreshold:    1,  // 成功阈值
+		FailureThreshold:    10, // 失败阈值
+	}
+}
+
+// buildInitContainerCommand 构建 initContainer 启动命令
+func buildInitContainerCommand() []string {
+	// 使用脚本启动模式
+	initContainerCmd := `set -euo pipefail
+echo "[user] DEV_MODE=${DEV_MODE}"
+exec /opt/dev/scripts/start-${DEV_MODE}.sh`
+
+	return []string{"bash", "-c", initContainerCmd}
+}
+
+// buildUserContainerCommand 构建 userContainer 启动命令
+func buildUserContainerCommand() []string {
+	userContainerCmd := `set -euo pipefail
+echo "[user] DEV_MODE=${DEV_MODE}"
+exec /opt/dev/scripts/start-${DEV_MODE}.sh`
+
+	return []string{"bash", "-c", userContainerCmd}
+}
+
+func resolveWorkDir(workDir string) string {
+	if strings.TrimSpace(workDir) == "" {
+		return defaultWorkDir
+	}
+
+	return workDir
+}
+
+// BuildResourceRequirements 构建资源请求和限制
+func BuildResourceRequirements(cpu, memory, gpu, gpuName string) corev1.ResourceRequirements {
+	requests := corev1.ResourceList{}
+	limits := corev1.ResourceList{}
+
+	// 设置 CPU 请求
+	if cpu != "" {
+		cpuQuantity, err := resource.ParseQuantity(cpu + "") // 用户传入的数值，单位为核
+		if err == nil {
+			requests[corev1.ResourceCPU] = cpuQuantity
+			limits[corev1.ResourceCPU] = cpuQuantity
+		}
+	}
+
+	// 设置内存请求
+	if memory != "" {
+		memoryQuantity, err := resource.ParseQuantity(memory + "Gi") // 用户传入的数值，单位为Gi
+		if err == nil {
+			requests[corev1.ResourceMemory] = memoryQuantity
+			limits[corev1.ResourceMemory] = memoryQuantity
+		}
+	}
+
+	// 设置 GPU 请求
+	if gpu != "" && gpuName != "" {
+		gpuQuantity, err := resource.ParseQuantity(gpu) // GPU 数量
+		if err == nil {
+			// 检查 GPU 是否为虚拟化类型
+			if resourcesvc.IsGPUResource(gpuName) && resourcesvc.GetGPUType(gpuName) == resourcesvc.GPUCardTypeVirtual {
+				// 如果是虚拟化 GPU，需要特殊处理
+				requests[corev1.ResourceName(gpuName)] = gpuQuantity
+				limits[corev1.ResourceName(gpuName)] = gpuQuantity
+				//
+
+			} else {
+				// 如果是整卡 GPU，直接设置
+				requests[corev1.ResourceName(gpuName)] = gpuQuantity
+				limits[corev1.ResourceName(gpuName)] = gpuQuantity
+			}
+		}
+	}
+
+	return corev1.ResourceRequirements{
+		Requests: requests,
+		Limits:   limits,
+	}
+}
+
+// ==================== Service 构建 ====================
+
+// generateDevMachineService 生成开发机 Service
+func generateDevMachineService(request *devmachinemodel.CreateDevmachineRequest) *corev1.Service {
+	labels := generateLabels(request.Namespace, request.Name, request.Labels)
+	port := getServicePort(request.WebIDE)
+
+	service := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      request.Name + serviceSuffix,
+			Namespace: request.Namespace,
+			Labels:    labels,
+		},
+		Spec: corev1.ServiceSpec{
+			Selector: labels,
+			Type:     corev1.ServiceTypeClusterIP,
+			Ports:    buildServicePorts(port),
+		},
+	}
+
+	return service
+}
+
+// getServicePort 根据 WebIDE 类型获取服务端口
+func getServicePort(webIDE devmachinemodel.WebIDEType) int32 {
+	switch webIDE {
+	case devmachinemodel.WebIDEVSCode:
+		return vscodePort
+	case devmachinemodel.WebIDEJupyter:
+		fallthrough
+	default:
+		return jupyterPort
+	}
+}
+
+// buildServicePorts 构建服务端口
+func buildServicePorts(port int32) []corev1.ServicePort {
+	return []corev1.ServicePort{
+		{
+			Name:       "http",
+			Port:       port,
+			TargetPort: intstr.FromInt(int(port)),
+		},
+	}
+}
+
+// ==================== Ingress 构建 ====================
+
+// generateDevMachineIngress 生成开发机 Ingress
+func generateDevMachineIngress(request *devmachinemodel.CreateDevmachineRequest) *networkingv1.Ingress {
+	webIDE := request.WebIDE
+	if webIDE == "" {
+		webIDE = devmachinemodel.WebIDEJupyter
+	}
+
+	if webIDE == devmachinemodel.WebIDEVSCode {
+		return generateVSCodeIngress(request)
+	}
+	ing := generateJupyterIngress(request)
+	log.Infof("finish to create devmachine ingress: %s", util.JsonOutPut(ing))
+	return ing
+}
+
+// generateVSCodeIngress 生成 VSCode Ingress
+func generateVSCodeIngress(request *devmachinemodel.CreateDevmachineRequest) *networkingv1.Ingress {
+	labels := generateLabels(request.Namespace, request.Name, request.Labels)
+	port := getServicePort(devmachinemodel.WebIDEVSCode)
+	basePath := buildIngressPath(request.Namespace, request.Name)
+	path := fmt.Sprintf("%s(/|$)(.*)", basePath)
+
+	annotations := defaultAnnotations
+	annotations[devmachinemodel.RewriteTarget] = "/$2"
+
+	ingress := &networkingv1.Ingress{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        request.Name + ingressSuffix,
+			Namespace:   request.Namespace,
+			Labels:      labels,
+			Annotations: annotations,
+		},
+		Spec: buildIngressSpec(request.Name+serviceSuffix, path, port),
+	}
+
+	return ingress
+}
+
+// generateJupyterIngress 生成 Jupyter Ingress
+func generateJupyterIngress(request *devmachinemodel.CreateDevmachineRequest) *networkingv1.Ingress {
+	labels := generateLabels(request.Namespace, request.Name, request.Labels)
+	port := getServicePort(devmachinemodel.WebIDEJupyter)
+	path := buildIngressPath(request.Namespace, request.Name)
+
+	annotations := defaultAnnotations
+	// 先检查 key 是否存在
+	if _, exists := annotations["nginx.ingress.kubernetes.io/rewrite-target"]; exists {
+		delete(annotations, devmachinemodel.RewriteTarget)
+		fmt.Println("can get this key:", devmachinemodel.RewriteTarget)
+	} else {
+		fmt.Println("not found this anno:", devmachinemodel.RewriteTarget)
+	}
+	ingress := &networkingv1.Ingress{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        request.Name + ingressSuffix,
+			Namespace:   request.Namespace,
+			Labels:      labels,
+			Annotations: annotations,
+		},
+		Spec: buildIngressSpec(request.Name+serviceSuffix, path, port),
+	}
+
+	return ingress
+}
+
+// buildIngressPath 构建 Ingress 路径
+func buildIngressPath(namespace, name string) string {
+	return fmt.Sprintf("/%s-%s", namespace, name)
+}
+
+// buildIngressSpec 构建 Ingress 规范
+func buildIngressSpec(serviceName, path string, port int32) networkingv1.IngressSpec {
+	return networkingv1.IngressSpec{
+		IngressClassName: ptr.To("nginx"),
+		Rules:            buildIngressRules(serviceName, path, port),
+	}
+}
+
+// buildIngressRules 构建 Ingress 规则
+func buildIngressRules(serviceName, path string, port int32) []networkingv1.IngressRule {
+	return []networkingv1.IngressRule{
+		{
+			IngressRuleValue: buildIngressRuleValue(serviceName, path, port),
+		},
+	}
+}
+
+// buildIngressRuleValue 构建 Ingress 规则值
+func buildIngressRuleValue(serviceName, path string, port int32) networkingv1.IngressRuleValue {
+	return networkingv1.IngressRuleValue{
+		HTTP: &networkingv1.HTTPIngressRuleValue{
+			Paths: buildIngressPaths(serviceName, path, port),
+		},
+	}
+}
+
+// buildIngressPaths 构建 Ingress 路径列表
+func buildIngressPaths(serviceName, path string, port int32) []networkingv1.HTTPIngressPath {
+	pathTypePrefix := networkingv1.PathTypePrefix
+
+	return []networkingv1.HTTPIngressPath{
+		{
+			Path:     path,
+			PathType: &pathTypePrefix,
+			Backend:  buildIngressBackend(serviceName, port),
+		},
+	}
+}
+
+// buildIngressBackend 构建 Ingress 后端
+func buildIngressBackend(serviceName string, port int32) networkingv1.IngressBackend {
+	return networkingv1.IngressBackend{
+		Service: &networkingv1.IngressServiceBackend{
+			Name: serviceName,
+			Port: networkingv1.ServiceBackendPort{
+				Number: port,
+			},
+		},
+	}
+}
+
+// ==================== 辅助函数 ====================
+
+// generateLabels 生成标签
+func generateLabels(namespace, name string, labels map[string]string) map[string]string {
+	if labels == nil {
+		labels = make(map[string]string)
+	}
+	labels["app"] = fmt.Sprintf(devMachineName, namespace, name)
+	return labels
+}
+
+// generateAnnotations 生成注解
+func generateAnnotations(queue string, annotations map[string]string) map[string]string {
+	if annotations == nil {
+		annotations = make(map[string]string)
+	}
+	annotations[volcanoQueueName] = queue
+	return annotations
+}
