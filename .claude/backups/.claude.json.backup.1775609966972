@@ -1,6 +1,6 @@
 {
-  "numStartups": 1033,
-  "installMethod": "global",
+  "numStartups": 1031,
+  "installMethod": "native",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
   "customApiKeyResponses": {
@@ -598,38 +598,55 @@
         "version": null,
         "packageManager": null
       },
-      "lastCost": 0,
-      "lastAPIDuration": 0,
-      "lastAPIDurationWithoutRetries": 0,
+      "lastCost": 0.020795749999999998,
+      "lastAPIDuration": 4697,
+      "lastAPIDurationWithoutRetries": 4664,
       "lastToolDuration": 0,
-      "lastDuration": 6693,
+      "lastDuration": 9069,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
-      "lastTotalInputTokens": 0,
-      "lastTotalOutputTokens": 0,
-      "lastTotalCacheCreationInputTokens": 0,
-      "lastTotalCacheReadInputTokens": 0,
+      "lastTotalInputTokens": 340,
+      "lastTotalOutputTokens": 71,
+      "lastTotalCacheCreationInputTokens": 4299,
+      "lastTotalCacheReadInputTokens": 11245,
       "lastTotalWebSearchRequests": 0,
-      "lastModelUsage": {},
-      "lastSessionId": "21857e15-d0b1-445a-9d6d-d7135f6c6db3",
+      "lastModelUsage": {
+        "claude-haiku-4-5-20251001": {
+          "inputTokens": 337,
+          "outputTokens": 11,
+          "cacheReadInputTokens": 0,
+          "cacheCreationInputTokens": 0,
+          "webSearchRequests": 0,
+          "costUSD": 0.000392
+        },
+        "claude-sonnet-4-6": {
+          "inputTokens": 3,
+          "outputTokens": 60,
+          "cacheReadInputTokens": 11245,
+          "cacheCreationInputTokens": 4299,
+          "webSearchRequests": 0,
+          "costUSD": 0.02040375
+        }
+      },
+      "lastSessionId": "1cfc515d-7c73-42e7-9eda-72f9d81ce61c",
       "exampleFiles": [
         "docs.go",
         "routes.go",
-        "Makefile",
         "handler.go",
-        "config.go"
+        "Makefile",
+        "client.go"
       ],
-      "exampleFilesGeneratedAt": 1775609967134,
-      "lastFpsAverage": 1.79,
-      "lastFpsLow1Pct": 329.72,
+      "exampleFilesGeneratedAt": 1774581866563,
+      "lastFpsAverage": 13.7,
+      "lastFpsLow1Pct": 448.58,
       "lastSessionMetrics": {
-        "frame_duration_ms_count": 11,
-        "frame_duration_ms_min": 0.06625000000076398,
-        "frame_duration_ms_max": 3.0329170000004524,
-        "frame_duration_ms_avg": 0.6481097272727848,
-        "frame_duration_ms_p50": 0.39412499999980355,
-        "frame_duration_ms_p95": 2.014353999999912,
-        "frame_duration_ms_p99": 2.829204400000345
+        "frame_duration_ms_count": 108,
+        "frame_duration_ms_min": 0.04275000000006912,
+        "frame_duration_ms_max": 4.181583000000046,
+        "frame_duration_ms_avg": 0.4851033796295938,
+        "frame_duration_ms_p50": 0.3741459999998824,
+        "frame_duration_ms_p95": 1.015108350000059,
+        "frame_duration_ms_p99": 2.204105369999881
       }
     },
     "/Users/xuwentao/Projects/github/aibrix": {
@@ -2122,7 +2139,7 @@
         "amount_minor_units": 2000,
         "currency": "USD"
       },
-      "timestamp": 1775609996485
+      "timestamp": 1775576463874
     }
   },
   "migrationVersion": 11,
