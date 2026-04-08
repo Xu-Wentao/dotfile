@@ -1,0 +1,8 @@
+[projects."/Users/xuwentao/Projects/github/patent-platform"]
+trust_level = "trusted"
+
+[projects."/Users/xuwentao/Projects/github/volcano"]
+trust_level = "trusted"
+
+[tui]
+status_line = ["model-with-reasoning", "context-remaining", "current-dir", "context-used", "five-hour-limit"]
