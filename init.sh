@@ -23,7 +23,7 @@ link() {
 for item in "$DOTFILE_DIR"/.*; do
     name="$(basename "$item")"
     # Skip . .. and .git
-    [[ "$name" == "." || "$name" == ".." || "$name" == ".git" ]] && continue
+    [[ "$name" == "." || "$name" == ".." || "$name" == ".git" || "$name" == ".gitignore" ]] && continue
     link "$item" "$HOME/$name"
 done
 
