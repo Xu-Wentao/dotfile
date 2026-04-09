@@ -5,7 +5,7 @@
       "repo": "openai/codex-plugin-cc"
     },
     "installLocation": "/Users/xuwentao/.claude/plugins/marketplaces/openai-codex",
-    "lastUpdated": "2026-03-31T00:50:41.352Z"
+    "lastUpdated": "2026-04-09T03:06:08.053Z"
   },
   "cocoindex": {
     "source": {
@@ -13,6 +13,6 @@
       "repo": "cocoindex-io/cocoindex-claude"
     },
     "installLocation": "/Users/xuwentao/.claude/plugins/marketplaces/cocoindex",
-    "lastUpdated": "2026-03-31T07:18:04.164Z"
+    "lastUpdated": "2026-04-09T03:06:12.902Z"
   }
 }

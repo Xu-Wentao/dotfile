@@ -1,3 +1,12 @@
+# claude
 .claude/telemetry/
+.claude/file-history/
+.claude/backups/
+.claude/ide/
+.claude/projects/
+.claude/sessions/
+.claude/shell-snapshots/
+
+# codex
 .codex/tmp/
 .codex/.tmp/
