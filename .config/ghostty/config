@@ -4,3 +4,6 @@ font-family-bold = Maple Mono NF CN
 font-family-italic = Maple Mono NF CN
 font-family-bold-italic = Maple Mono NF CN
 font-size = 14
+
+# theme
+theme = Catppuccin Macchiato
