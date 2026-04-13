@@ -1,5 +1,5 @@
 {
-  "numStartups": 1341,
+  "numStartups": 1174,
   "installMethod": "global",
   "autoUpdates": false,
   "hasSeenTasksHint": true,
@@ -25,7 +25,7 @@
     "install-slack-app": 1026,
     "drag-and-drop-images": 1029,
     "paste-images-mac": 1036,
-    "double-esc-code-restore": 1246,
+    "double-esc-code-restore": 1006,
     "continue": 1011,
     "shift-tab": 1025,
     "image-paste": 1034,
@@ -1392,7 +1392,7 @@
       "lastAPIDuration": 0,
       "lastAPIDurationWithoutRetries": 0,
       "lastToolDuration": 0,
-      "lastDuration": 38425,
+      "lastDuration": 38534,
       "lastLinesAdded": 0,
       "lastLinesRemoved": 0,
       "lastTotalInputTokens": 0,
@@ -1400,18 +1400,18 @@
       "lastTotalCacheCreationInputTokens": 0,
       "lastTotalCacheReadInputTokens": 0,
       "lastTotalWebSearchRequests": 0,
-      "lastFpsAverage": 5.53,
-      "lastFpsLow1Pct": 17.08,
+      "lastFpsAverage": 5.39,
+      "lastFpsLow1Pct": 16.9,
       "lastModelUsage": {},
-      "lastSessionId": "e257539e-6030-494c-b7e2-685d594afb1e",
+      "lastSessionId": "987fb378-e051-49ca-8532-a616d9c3b0d3",
       "lastSessionMetrics": {
         "frame_duration_ms_count": 14,
-        "frame_duration_ms_min": 0.05195800000001327,
-        "frame_duration_ms_max": 58.53129099999978,
-        "frame_duration_ms_avg": 10.187074285714317,
-        "frame_duration_ms_p50": 0.16508299999986775,
-        "frame_duration_ms_p95": 50.98942289999997,
-        "frame_duration_ms_p99": 57.02291737999981
+        "frame_duration_ms_min": 0.06512500000008004,
+        "frame_duration_ms_max": 59.163416999999754,
+        "frame_duration_ms_avg": 10.417675714285663,
+        "frame_duration_ms_p50": 0.19756250000000364,
+        "frame_duration_ms_p95": 49.2862061499997,
+        "frame_duration_ms_p99": 57.18797482999973
       }
     },
     "/": {
