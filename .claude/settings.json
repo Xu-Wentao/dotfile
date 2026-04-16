@@ -1,6 +1,19 @@
 {
+  "enabledPlugins": {
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "repo": "openai/codex-plugin-cc",
+        "source": "github"
+      }
+    }
+  },
+  "model": "opus",
   "statusLine": {
-    "type": "command",
-    "command": "sh /Users/xuwentao/.claude/statusline-command.sh"
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0,
+    "type": "command"
   }
 }
