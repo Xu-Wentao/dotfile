@@ -23,5 +23,7 @@ alias cc "claude"
 alias rm "trash"
 alias ll "ls -alt"
 alias gs "git status"
+alias cat "bat -p"
+alias o "open"
 
 eval "$(/opt/homebrew/bin/brew shellenv fish)"
