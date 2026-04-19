@@ -6,6 +6,15 @@
   "enabledPlugins": {
     "codex@openai-codex": true
   },
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "sk-c2daa0b1a03744f08ac787fa46215632",
+    "ANTHROPIC_BASE_URL": "https://dashscope.aliyuncs.com/apps/anthropic",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "qwen3.6-plus",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "qwen3.6-plus",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "qwen3.6-plus",
+    "ANTHROPIC_MODEL": "qwen3.6-plus",
+    "ANTHROPIC_REASONING_MODEL": "qwen3.6-plus"
+  },
   "extraKnownMarketplaces": {
     "openai-codex": {
       "source": {
@@ -14,7 +23,6 @@
       }
     }
   },
-  "model": "opus",
   "statusLine": {
     "command": "npx -y ccstatusline@latest",
     "padding": 0,

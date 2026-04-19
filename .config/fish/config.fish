@@ -26,5 +26,6 @@ alias gs "git status"
 alias cat "bat -p"
 alias o "open"
 alias rm "trash"
+alias k "kubectl"
 
 eval "$(/opt/homebrew/bin/brew shellenv fish)"
