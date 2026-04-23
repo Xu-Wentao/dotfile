@@ -1,0 +1,20 @@
+rank7]: Traceback (most recent call last):
+[rank7]:   File "/app/src/llamafactory/launcher.py", line 185, in <module>
+[rank7]:     run_exp()
+[rank7]:   File "/app/src/llamafactory/train/tuner.py", line 139, in run_exp
+[rank7]:     _training_function(config={"args": args, "callbacks": callbacks})
+[rank7]:   File "/app/src/llamafactory/train/tuner.py", line 65, in _training_function
+[rank7]:     model_args, data_args, training_args, finetuning_args, generating_args = get_train_args(args)
+[rank7]:                                                                              ^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/app/src/llamafactory/hparams/parser.py", line 290, in get_train_args
+[rank7]:     model_args, data_args, training_args, finetuning_args, generating_args = _parse_train_args(args)
+[rank7]:                                                                              ^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/app/src/llamafactory/hparams/parser.py", line 244, in _parse_train_args
+[rank7]:     return _parse_args(parser, args, allow_extra_keys=allow_extra_keys)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/app/src/llamafactory/hparams/parser.py", line 91, in _parse_args
+[rank7]:     return parser.parse_dict(args, allow_extra_keys=allow_extra_keys)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/python3.11.14/lib/python3.11/site-packages/transformers/hf_argparser.py", line 383, in parse_dict
+[rank7]:     raise ValueError(f"Some keys are not used by the HfArgumentParser: {sorted(unused_keys)}")
+[rank7]: ValueError: Some keys are not used by the HfArgumentParser: ['use_npu_fusion_attention', 'use_npu_fusion_rmsnorm', 'use_npu_fusion_rope', 'use_npu_fusion_swiglu']
