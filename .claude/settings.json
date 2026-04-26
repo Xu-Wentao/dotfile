@@ -3,21 +3,20 @@
     "commit": "",
     "pr": ""
   },
+  "statusLine": {
+    "type": "command",
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0
+  },
   "enabledPlugins": {
     "codex@openai-codex": true
   },
   "extraKnownMarketplaces": {
     "openai-codex": {
       "source": {
-        "repo": "openai/codex-plugin-cc",
-        "source": "github"
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
       }
     }
-  },
-  "model": "opus",
-  "statusLine": {
-    "command": "npx -y ccstatusline@latest",
-    "padding": 0,
-    "type": "command"
   }
 }
