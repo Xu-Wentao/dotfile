@@ -6,6 +6,8 @@
 .claude/projects/
 .claude/sessions/
 .claude/shell-snapshots/
+.claude/session-env
+.claude/history.jsonl
 
 # codex
 .codex/tmp/
