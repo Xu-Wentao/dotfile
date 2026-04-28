@@ -18,5 +18,6 @@
         "repo": "openai/codex-plugin-cc"
       }
     }
-  }
+  },
+  "model": "opus"
 }
