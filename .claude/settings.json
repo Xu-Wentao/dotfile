@@ -1,4 +1,11 @@
 {
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "enabledPlugins": {
+    "codex@openai-codex": true
+  },
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "4c91a3c31a76452c95c544029126ef22.roSwbUI3LxYM6LoN",
     "ANTHROPIC_BASE_URL": "https://open.bigmodel.cn/api/anthropic",
@@ -8,25 +15,18 @@
     "ANTHROPIC_MODEL": "glm-5.1",
     "ANTHROPIC_REASONING_MODEL": "glm-5.1"
   },
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
-  "model": "opus[1m]",
-  "statusLine": {
-    "type": "command",
-    "command": "npx -y ccstatusline@latest",
-    "padding": 0
-  },
-  "enabledPlugins": {
-    "codex@openai-codex": true
-  },
   "extraKnownMarketplaces": {
     "openai-codex": {
       "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
+        "repo": "openai/codex-plugin-cc",
+        "source": "github"
       }
     }
+  },
+  "model": "opus",
+  "statusLine": {
+    "command": "npx -y ccstatusline@latest",
+    "padding": 0,
+    "type": "command"
   }
 }
