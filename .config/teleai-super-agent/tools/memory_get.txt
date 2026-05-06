@@ -1,0 +1,1 @@
+读取长期记忆文件内容。支持读取 USER.md（用户指定的长期记忆）、MEMORY.md（系统推断的核心事实记忆）或特定日期的每日日志 daily-log/YYYY-MM-DD.md。参数：file（文件名，如 USER.md、MEMORY.md、2026-03-09.md）。

@@ -1,0 +1,16 @@
+- 使用火山引擎 Ark 豆包视觉模型理解图片内容
+- 支持把提示词 prompt 和图片一起输入，返回模型理解结果
+- 图片可以是公网 URL、data:image base64，或本地文件路径
+- 本地图片超过 5MB 时会自动压缩到 5MB 以下再发送
+- 仅支持 png、jpg、jpeg、webp 图片，不支持 ppt、pptx、pdf 等非图片文件
+
+使用说明
+  - prompt 必填。你想让模型做什么问什么
+  - image_url 可选。支持 httphttps、data:image base64，或可访问的本地图片路径
+  - file_path 可选。本地图片路径（png、jpg、jpeg、webp）
+  - image_url 与 file_path 二选一即可
+  - model 可选。不传则使用环境变量 VISION_MODEL
+
+示例
+  - prompt 请提取图片中的所有文字，并总结主要内容
+  - image_url httpsark-project.tos-cn-beijing.volces.comdoc_imageark_demo_img_1.png

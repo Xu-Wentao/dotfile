@@ -1,0 +1,23 @@
+- 在 Arxiv 上搜索学术论文 - 执行实时学术搜索并获取相关论文
+- 提供最新的研究论文和学术出版物
+- 返回最相关的学术论文，包括标题、作者、摘要、发布时间和链接
+- 使用此工具获取最新的学术研究成果、AI 论文、计算机科学研究等
+- 搜索在单次请求中自动完成，无需 API key
+
+使用说明:
+  - query: 搜索查询内容，支持关键词、作者名、标题等
+  - max_results: 返回结果数量（可选），默认 10，最多 50
+  - 返回结果包含论文标题、作者列表、摘要、发布时间、链接和 PDF 下载地址
+  - 适用于查询最新的学术研究、论文综述、前沿技术等
+
+搜索建议:
+  - 使用英文关键词搜索效果更好，例如: "machine learning", "transformer", "large language model"
+  - 可以搜索作者名，例如: "Hinton", "LeCun"
+  - 可以搜索特定主题，例如: "computer vision", "natural language processing"
+  - 可以组合关键词，例如: "attention mechanism", "diffusion model"
+
+示例查询:
+  - "large language model" - 搜索大语言模型相关论文
+  - "diffusion model" - 搜索扩散模型相关论文
+  - "reinforcement learning" - 搜索强化学习相关论文
+  - "Geoffrey Hinton" - 搜索 Geoffrey Hinton 的论文
